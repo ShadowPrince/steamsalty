@@ -1,0 +1,6 @@
+Carthage
+Cartfile.resolved
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata
+
+.DS_Store

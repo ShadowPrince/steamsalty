@@ -1,0 +1,411 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F30029271DC676BC00C103D3 /* StackedControllersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30029261DC676BC00C103D3 /* StackedControllersViewController.swift */; };
+		F325685D1DBFD9870096A2CD /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F325685C1DBFD9870096A2CD /* ChatViewController.swift */; };
+		F35235511DBF60F2006A8BA3 /* SteamApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35235501DBF60F2006A8BA3 /* SteamApi.swift */; };
+		F35235551DBF6205006A8BA3 /* Decodable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F35235541DBF6205006A8BA3 /* Decodable.framework */; };
+		F35235571DBF63CE006A8BA3 /* SteamDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35235561DBF63CE006A8BA3 /* SteamDataTypes.swift */; };
+		F3833B131DC0D5CC00D83E8B /* SteamPollManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3833B121DC0D5CC00D83E8B /* SteamPollManager.swift */; };
+		F3C5020A1DB4C20200AD4F3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3C502091DB4C20200AD4F3F /* AppDelegate.swift */; };
+		F3C5020C1DB4C20200AD4F3F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3C5020B1DB4C20200AD4F3F /* ViewController.swift */; };
+		F3C5020F1DB4C20200AD4F3F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F3C5020D1DB4C20200AD4F3F /* Main.storyboard */; };
+		F3C502111DB4C20200AD4F3F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3C502101DB4C20200AD4F3F /* Assets.xcassets */; };
+		F3C502141DB4C20200AD4F3F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F3C502121DB4C20200AD4F3F /* LaunchScreen.storyboard */; };
+		F3C5021D1DB4C30700AD4F3F /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3C5021C1DB4C30700AD4F3F /* Alamofire.framework */; };
+		F3DFCC7A1DC67CE3002F6039 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3DFCC791DC67CE3002F6039 /* ContactsViewController.swift */; };
+		F3DFCC7C1DC67D2A002F6039 /* ChatSessionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3DFCC7B1DC67D2A002F6039 /* ChatSessionsManager.swift */; };
+		F3F882B41DC65B4900F50BC3 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F882B31DC65B4900F50BC3 /* Helpers.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F30029261DC676BC00C103D3 /* StackedControllersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackedControllersViewController.swift; sourceTree = "<group>"; };
+		F325685C1DBFD9870096A2CD /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		F35235501DBF60F2006A8BA3 /* SteamApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteamApi.swift; sourceTree = "<group>"; };
+		F35235521DBF61F7006A8BA3 /* iOS */ = {isa = PBXFileReference; lastKnownFileType = folder; name = iOS; path = Carthage/Build/iOS; sourceTree = "<group>"; };
+		F35235541DBF6205006A8BA3 /* Decodable.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Decodable.framework; path = Carthage/Build/iOS/Decodable.framework; sourceTree = "<group>"; };
+		F35235561DBF63CE006A8BA3 /* SteamDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteamDataTypes.swift; sourceTree = "<group>"; };
+		F3833B121DC0D5CC00D83E8B /* SteamPollManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteamPollManager.swift; sourceTree = "<group>"; };
+		F3C502061DB4C20200AD4F3F /* SteamChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SteamChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3C502091DB4C20200AD4F3F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F3C5020B1DB4C20200AD4F3F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F3C5020E1DB4C20200AD4F3F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F3C502101DB4C20200AD4F3F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F3C502131DB4C20200AD4F3F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F3C502151DB4C20200AD4F3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F3C5021C1DB4C30700AD4F3F /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
+		F3DFCC791DC67CE3002F6039 /* ContactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
+		F3DFCC7B1DC67D2A002F6039 /* ChatSessionsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatSessionsManager.swift; sourceTree = "<group>"; };
+		F3F882B31DC65B4900F50BC3 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F3C502031DB4C20200AD4F3F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F35235551DBF6205006A8BA3 /* Decodable.framework in Frameworks */,
+				F3C5021D1DB4C30700AD4F3F /* Alamofire.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F352354F1DBF5F73006A8BA3 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				F3C502101DB4C20200AD4F3F /* Assets.xcassets */,
+				F3C502121DB4C20200AD4F3F /* LaunchScreen.storyboard */,
+				F3C502151DB4C20200AD4F3F /* Info.plist */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
+		F3C501FD1DB4C20200AD4F3F = {
+			isa = PBXGroup;
+			children = (
+				F3C502081DB4C20200AD4F3F /* SteamChat */,
+				F3C502071DB4C20200AD4F3F /* Products */,
+				F3C5021B1DB4C30700AD4F3F /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F3C502071DB4C20200AD4F3F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3C502061DB4C20200AD4F3F /* SteamChat.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3C502081DB4C20200AD4F3F /* SteamChat */ = {
+			isa = PBXGroup;
+			children = (
+				F3DFCC771DC67C26002F6039 /* SteamAPI */,
+				F3DFCC781DC67C2D002F6039 /* Lib */,
+				F3C502091DB4C20200AD4F3F /* AppDelegate.swift */,
+				F3C5020B1DB4C20200AD4F3F /* ViewController.swift */,
+				F3DFCC791DC67CE3002F6039 /* ContactsViewController.swift */,
+				F3DFCC7B1DC67D2A002F6039 /* ChatSessionsManager.swift */,
+				F325685C1DBFD9870096A2CD /* ChatViewController.swift */,
+				F3C5020D1DB4C20200AD4F3F /* Main.storyboard */,
+				F352354F1DBF5F73006A8BA3 /* Assets */,
+			);
+			path = SteamChat;
+			sourceTree = "<group>";
+		};
+		F3C5021B1DB4C30700AD4F3F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F35235541DBF6205006A8BA3 /* Decodable.framework */,
+				F35235521DBF61F7006A8BA3 /* iOS */,
+				F3C5021C1DB4C30700AD4F3F /* Alamofire.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F3DFCC771DC67C26002F6039 /* SteamAPI */ = {
+			isa = PBXGroup;
+			children = (
+				F35235501DBF60F2006A8BA3 /* SteamApi.swift */,
+				F35235561DBF63CE006A8BA3 /* SteamDataTypes.swift */,
+				F3833B121DC0D5CC00D83E8B /* SteamPollManager.swift */,
+			);
+			name = SteamAPI;
+			sourceTree = "<group>";
+		};
+		F3DFCC781DC67C2D002F6039 /* Lib */ = {
+			isa = PBXGroup;
+			children = (
+				F30029261DC676BC00C103D3 /* StackedControllersViewController.swift */,
+				F3F882B31DC65B4900F50BC3 /* Helpers.swift */,
+			);
+			name = Lib;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F3C502051DB4C20200AD4F3F /* SteamChat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3C502181DB4C20200AD4F3F /* Build configuration list for PBXNativeTarget "SteamChat" */;
+			buildPhases = (
+				F3C502021DB4C20200AD4F3F /* Sources */,
+				F3C502031DB4C20200AD4F3F /* Frameworks */,
+				F3C502041DB4C20200AD4F3F /* Resources */,
+				F35235581DBF6722006A8BA3 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SteamChat;
+			productName = SteamChat;
+			productReference = F3C502061DB4C20200AD4F3F /* SteamChat.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3C501FE1DB4C20200AD4F3F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0800;
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = shdwprince;
+				TargetAttributes = {
+					F3C502051DB4C20200AD4F3F = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = T7SD4W2ENW;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = F3C502011DB4C20200AD4F3F /* Build configuration list for PBXProject "SteamChat" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F3C501FD1DB4C20200AD4F3F;
+			productRefGroup = F3C502071DB4C20200AD4F3F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F3C502051DB4C20200AD4F3F /* SteamChat */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F3C502041DB4C20200AD4F3F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3C502141DB4C20200AD4F3F /* LaunchScreen.storyboard in Resources */,
+				F3C502111DB4C20200AD4F3F /* Assets.xcassets in Resources */,
+				F3C5020F1DB4C20200AD4F3F /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F35235581DBF6722006A8BA3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Decodable.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3C502021DB4C20200AD4F3F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F35235571DBF63CE006A8BA3 /* SteamDataTypes.swift in Sources */,
+				F3F882B41DC65B4900F50BC3 /* Helpers.swift in Sources */,
+				F35235511DBF60F2006A8BA3 /* SteamApi.swift in Sources */,
+				F3C5020C1DB4C20200AD4F3F /* ViewController.swift in Sources */,
+				F3833B131DC0D5CC00D83E8B /* SteamPollManager.swift in Sources */,
+				F3DFCC7A1DC67CE3002F6039 /* ContactsViewController.swift in Sources */,
+				F325685D1DBFD9870096A2CD /* ChatViewController.swift in Sources */,
+				F30029271DC676BC00C103D3 /* StackedControllersViewController.swift in Sources */,
+				F3DFCC7C1DC67D2A002F6039 /* ChatSessionsManager.swift in Sources */,
+				F3C5020A1DB4C20200AD4F3F /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F3C5020D1DB4C20200AD4F3F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F3C5020E1DB4C20200AD4F3F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F3C502121DB4C20200AD4F3F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F3C502131DB4C20200AD4F3F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F3C502161DB4C20200AD4F3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F3C502171DB4C20200AD4F3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F3C502191DB4C20200AD4F3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = T7SD4W2ENW;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = SteamChat/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.shdwprince.SteamChat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		F3C5021A1DB4C20200AD4F3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = T7SD4W2ENW;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = SteamChat/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.shdwprince.SteamChat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F3C502011DB4C20200AD4F3F /* Build configuration list for PBXProject "SteamChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3C502161DB4C20200AD4F3F /* Debug */,
+				F3C502171DB4C20200AD4F3F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3C502181DB4C20200AD4F3F /* Build configuration list for PBXNativeTarget "SteamChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3C502191DB4C20200AD4F3F /* Debug */,
+				F3C5021A1DB4C20200AD4F3F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3C501FE1DB4C20200AD4F3F /* Project object */;
+}
