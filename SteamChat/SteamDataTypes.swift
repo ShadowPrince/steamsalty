@@ -88,6 +88,10 @@ struct SteamChatMessage {
     let author: SteamUserId
     let message: String
     let timestamp: UInt64
+
+    func isIngoing() -> Bool {
+        return self.author != SteamApi.shared.user?.id
+    }
 }
 
 extension SteamChatMessage: Decodable {

@@ -38,7 +38,7 @@ class StackedContainersViewController: UIViewController {
     var dataSource: StackedContainersViewControllerDataSource!
 
     private var topOffset: CGFloat = 0.0
-    private let headerHeight: CGFloat = 40.0
+    private let headerHeight: CGFloat = 30.0
 
     private var dragLocation: CGPoint?
     private var dragDirection: DragDirection?
@@ -46,7 +46,12 @@ class StackedContainersViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         if self.dataSource.stackCount > 0 {
             self.foregroundController.setIndex(self.dataSource.stackIndex)
+            self.foregroundController.becomeForeground()
+        }
+
+        if self.dataSource.stackCount > 1 {
             self.backgroundController.setIndex(self.dataSource.stackNextIndex)
+            self.backgroundController.becomeBackground()
         }
 
         self.viewDidLayoutSubviews()
@@ -187,7 +192,7 @@ class StackedContainersViewController: UIViewController {
     }
     
     private func foregroundViewToDefaultPosition() {
-        let offset = self.isStackSupportPushing() ? self.headerHeight + self.topOffset : self.topOffset
+        let offset = self.isStackSupportPushing() ? self.headerHeight - 8 + self.topOffset : self.topOffset
         self.foregroundView.frame = CGRect(x: 0, y: offset, width: self.view.frame.width, height: self.view.frame.height - offset)
     }
     

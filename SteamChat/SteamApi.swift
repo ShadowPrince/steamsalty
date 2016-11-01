@@ -125,6 +125,7 @@ class SteamApi {
 
     let web: SteamApiMethod
     let api: SteamApiMethod
+    var user: SteamUser?
 
     init(web: SteamApiMethod, internal api: SteamApiMethod) {
         self.web = web
@@ -135,10 +136,10 @@ class SteamApi {
         Alamofire.request("https://steamcommunity.com/chat").responseString { (response) in
             var error: Error = RequestError.Error("Request failed")
 
-            let html = response.result.value!
-            if let match = NSRegularExpression.matches(in: html, of: " WebAPI, (\\{.*?\\}), (\\[.*?\\])", options: []).first {
-                let selfJson = match[0]
-                let usersJson = match[1]
+            if let html = response.result.value,
+               let match = NSRegularExpression.matches(in: html, of: " WebAPI, (\\{.*?\\}), (\\[.*?\\])", options: []).first {
+               let selfJson = match[0]
+               let usersJson = match[1]
                 do {
                     let selfObject = try JSONSerialization.jsonObject(with: selfJson, options: [])
                     let friendsObject = try JSONSerialization.jsonObject(with: usersJson, options: [])
@@ -146,6 +147,7 @@ class SteamApi {
                     let selfUser = try SteamUser.decode(selfObject)
                     let friendsArray = try [SteamUser].decode(friendsObject)
                     
+                    self.user = selfUser
                     handler(selfUser, friendsArray, nil)
                     return
                 } catch let e {

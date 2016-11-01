@@ -177,7 +177,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KFa-Ik-Y4O">
                                 <color key="backgroundColor" red="0.23529411759999999" green="0.27450980390000002" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="dao-9G-C4o"/>
+                                    <constraint firstAttribute="height" constant="30" id="dao-9G-C4o"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -194,26 +194,54 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xvU-g3-Z7P">
                                 <state key="normal" title="Send"/>
                             </button>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Sbk-0i-SwG">
-                                <frame key="frameInset" minY="40" width="375" height="294"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Sbk-0i-SwG">
+                                <color key="backgroundColor" red="0.95197117419999999" green="0.95197117419999999" blue="0.95197117419999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="LpH-V2-jD4">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ingoingCell" rowHeight="80" id="LpH-V2-jD4">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LpH-V2-jD4" id="HUd-7X-I9k">
-                                            <frame key="frameInset" width="375" height="43"/>
+                                            <frame key="frameInset" width="375" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" fixedFrame="YES" text="Foo" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="XdV-ud-2cb">
-                                                    <frame key="frameInset" width="375" height="43"/>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" scrollEnabled="NO" text="Foo" translatesAutoresizingMaskIntoConstraints="NO" id="XdV-ud-2cb" customClass="ChatTextView" customModule="SteamChat" customModuleProvider="target">
+                                                    <frame key="frameInset" minX="10" minY="10" width="188" height="60"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="tintColor" red="0.86833756345177671" green="0.86833756345177671" blue="0.86833756345177671" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="isIngoing" value="YES"/>
+                                                    </userDefinedRuntimeAttributes>
                                                 </textView>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="outgoingCell" rowHeight="80" id="Ug2-ky-whc">
+                                        <rect key="frame" x="0.0" y="108" width="375" height="80"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ug2-ky-whc" id="0ie-Fq-p8Z">
+                                            <frame key="frameInset" width="375" height="80"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" scrollEnabled="NO" text="Foo" textAlignment="right" translatesAutoresizingMaskIntoConstraints="NO" id="7BJ-IC-Xzk" customClass="ChatTextView" customModule="SteamChat" customModuleProvider="target">
+                                                    <frame key="frameInset" minX="178" minY="10" width="187" height="60"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" red="0.78822559181552698" green="0.90293193196282162" blue="0.70737881112996404" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="tintColor" red="0.86833756345177671" green="0.86833756345177671" blue="0.86833756345177671" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="isIngoing" value="NO"/>
+                                                    </userDefinedRuntimeAttributes>
+                                                </textView>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
@@ -222,7 +250,7 @@
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ibz-we-hfH">
-                                <frame key="frameInset" minY="5" width="47" height="30"/>
+                                <frame key="frameInset" minY="-3" width="47" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="&lt;">
                                     <color key="titleColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -236,13 +264,13 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="xvU-g3-Z7P" secondAttribute="trailing" constant="8" id="1RA-kS-wIi"/>
                             <constraint firstAttribute="trailing" secondItem="Sbk-0i-SwG" secondAttribute="trailing" id="Dgu-0r-4RT"/>
-                            <constraint firstItem="KFa-Ik-Y4O" firstAttribute="top" secondItem="iBm-lD-BoR" secondAttribute="bottom" id="I1Z-DD-baD"/>
                             <constraint firstItem="Wqx-Uz-VU5" firstAttribute="leading" secondItem="Ows-XH-n9G" secondAttribute="leading" id="LgC-64-pFe"/>
                             <constraint firstItem="xvU-g3-Z7P" firstAttribute="leading" secondItem="Wqx-Uz-VU5" secondAttribute="trailing" constant="8" id="Mee-U7-RoZ"/>
                             <constraint firstItem="KFa-Ik-Y4O" firstAttribute="leading" secondItem="Ows-XH-n9G" secondAttribute="leading" id="PaO-zN-7fD"/>
                             <constraint firstItem="Sbk-0i-SwG" firstAttribute="leading" secondItem="Ows-XH-n9G" secondAttribute="leading" id="TCK-gR-vY8"/>
                             <constraint firstItem="F7h-8j-RVB" firstAttribute="top" secondItem="Wqx-Uz-VU5" secondAttribute="bottom" id="bZ2-Y7-mkC"/>
                             <constraint firstItem="Sbk-0i-SwG" firstAttribute="top" secondItem="KFa-Ik-Y4O" secondAttribute="bottom" id="cjY-4e-Xiv"/>
+                            <constraint firstItem="KFa-Ik-Y4O" firstAttribute="top" secondItem="iBm-lD-BoR" secondAttribute="bottom" id="hO2-PG-H8N"/>
                             <constraint firstItem="Wqx-Uz-VU5" firstAttribute="top" secondItem="Sbk-0i-SwG" secondAttribute="bottom" id="jB7-7G-1vR"/>
                             <constraint firstItem="Sbk-0i-SwG" firstAttribute="top" secondItem="KFa-Ik-Y4O" secondAttribute="bottom" id="pUm-yr-JvC"/>
                             <constraint firstItem="F7h-8j-RVB" firstAttribute="top" secondItem="xvU-g3-Z7P" secondAttribute="bottom" constant="8" id="ubZ-QX-qVJ"/>
@@ -250,6 +278,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="backButton" destination="Ibz-we-hfH" id="DJM-Yh-daS"/>
                         <outlet property="tableView" destination="Sbk-0i-SwG" id="maH-Nl-hZa"/>
                         <outlet property="titleLabel" destination="KFa-Ik-Y4O" id="zrF-h9-L8O"/>
                     </connections>
@@ -261,6 +290,6 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="BbL-29-uOA"/>
-        <segue reference="fWy-D2-Qz9"/>
+        <segue reference="6W0-gB-E9y"/>
     </inferredMetricsTieBreakers>
 </document>
