@@ -21,6 +21,7 @@
 		F3C5021D1DB4C30700AD4F3F /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3C5021C1DB4C30700AD4F3F /* Alamofire.framework */; };
 		F3DFCC7A1DC67CE3002F6039 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3DFCC791DC67CE3002F6039 /* ContactsViewController.swift */; };
 		F3DFCC7C1DC67D2A002F6039 /* ChatSessionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3DFCC7B1DC67D2A002F6039 /* ChatSessionsManager.swift */; };
+		F3DFCC7E1DC8D6D7002F6039 /* ChatViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3DFCC7D1DC8D6D7002F6039 /* ChatViews.swift */; };
 		F3F882B41DC65B4900F50BC3 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F882B31DC65B4900F50BC3 /* Helpers.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,7 @@
 		F3C5021C1DB4C30700AD4F3F /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		F3DFCC791DC67CE3002F6039 /* ContactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		F3DFCC7B1DC67D2A002F6039 /* ChatSessionsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatSessionsManager.swift; sourceTree = "<group>"; };
+		F3DFCC7D1DC8D6D7002F6039 /* ChatViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViews.swift; sourceTree = "<group>"; };
 		F3F882B31DC65B4900F50BC3 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				F30029261DC676BC00C103D3 /* StackedControllersViewController.swift */,
+				F3DFCC7D1DC8D6D7002F6039 /* ChatViews.swift */,
 				F3F882B31DC65B4900F50BC3 /* Helpers.swift */,
 			);
 			name = Lib;
@@ -228,6 +231,7 @@
 				F3C5020C1DB4C20200AD4F3F /* ViewController.swift in Sources */,
 				F3833B131DC0D5CC00D83E8B /* SteamPollManager.swift in Sources */,
 				F3DFCC7A1DC67CE3002F6039 /* ContactsViewController.swift in Sources */,
+				F3DFCC7E1DC8D6D7002F6039 /* ChatViews.swift in Sources */,
 				F325685D1DBFD9870096A2CD /* ChatViewController.swift in Sources */,
 				F30029271DC676BC00C103D3 /* StackedControllersViewController.swift in Sources */,
 				F3DFCC7C1DC67D2A002F6039 /* ChatSessionsManager.swift in Sources */,

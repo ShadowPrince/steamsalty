@@ -12,25 +12,32 @@ import UIKit
 class ActiveChatSessionsViewController: StackedContainersViewController {
     override func viewWillAppear(_ animated: Bool) {
         self.dataSource = ChatSessionsManager.shared
-
         super.viewWillAppear(animated)
     }
+}
+
+struct SteamChatParsedMessage {
+    var attributed: NSAttributedString!
+    var msg: SteamChatMessage!
 }
 
 class ChatViewController: StackedContainerViewController, UITableViewDataSource, UITableViewDelegate, ChatSessionManagerDelegate {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var backButton: UIButton!
+    @IBOutlet weak var newMessagesLabel: NewMessagesLabel!
+    @IBOutlet weak var avatarImageView: AvatarImageView!
+    @IBOutlet weak var personaStateLabel: PersonaStateLabel!
 
+    private var isForeground: Bool = false
     private var index: Int?
-    private var user: SteamUser!
-    private var messages = [SteamChatMessage]()
+    private var messages = [SteamChatParsedMessage]()
+    private var session: ChatSession!
+    
     private var textBounds = [Int: CGRect]()
 
     override func viewDidLoad() {
-        self.view.layer.borderWidth = 1.0
-        self.view.layer.borderColor = UIColor.gray.cgColor
-        self.view.layer.cornerRadius = 5.0
+        self.newMessagesLabel.isHidden = true
     }
     
     override func setIndex(_ index: Int) {
@@ -38,37 +45,93 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
             ChatSessionsManager.shared.delegates.removeValue(forKey: lastIndex)
         }
 
-        let session = ChatSessionsManager.shared.sessions[index]
-        self.user = session.user
-        self.messages = session.messages
+        self.index = index
+        self.session = ChatSessionsManager.shared.sessions[index]
+        self.messages.removeAll()
+        self.appendMessages(session.messages)
 
         self.tableView.reloadData()
-        self.titleLabel.text = self.user.name
+        self.titleLabel.text = "\(self.session.user.name)"
+        self.avatarImageView.loadImage(at: self.session.user.avatar)
+        self.updateUserStatus()
 
-        self.index = index
         ChatSessionsManager.shared.delegates[index] = self
     }
 
     override func becomeForeground() {
-        self.view.layer.borderWidth = 1.0
+        self.isForeground = true
+        if self.session.unread > 0 {
+            self.scrollToBottom()
+        }
+
+        ChatSessionsManager.shared.markAsRead(session: self.session)
         self.backButton.isHidden = false
+        self.newMessagesLabel.isHidden = true
     }
 
     override func becomeBackground() {
-        self.view.layer.borderWidth = 0.0
+        self.isForeground = false
+
         self.backButton.isHidden = true
     }
 
     func receivedMessages(_ messages: [SteamChatMessage]) {
         let lastIndex = self.messages.count
-        self.messages.append(contentsOf: messages)
+        self.appendMessages(messages)
 
         var indexes = [IndexPath]()
         for i in lastIndex..<self.messages.count {
             indexes.append(IndexPath.init(row: i, section: 0))
         }
 
-        self.tableView.insertRows(at: indexes, with: .automatic)
+        OperationQueue.main.addOperation {
+            self.tableView.insertRows(at: indexes, with: .automatic)
+        }
+
+        if !self.isForeground {
+            self.updateUnreadCounter()
+        } else {
+            ChatSessionsManager.shared.markAsRead(session: self.session)
+            OperationQueue.main.addOperation {
+                if self.shouldScrollToBottom() {
+                    self.scrollToBottom()
+                }
+            }
+        }
+    }
+
+    func appendMessages(_ messages: [SteamChatMessage]) {
+        for msg in messages {
+            self.messages.append(SteamChatParsedMessage(attributed: MessageParser.shared.parseMessage(msg.message), msg: msg))
+        }
+    }
+
+    func updatedNextElement() {
+        if self.isForeground == false, let index = self.index {
+            self.setIndex(index)
+            self.updateUnreadCounter()
+        }
+    }
+
+    func updateUserStatus() {
+        self.personaStateLabel.setToState(self.session.user.state)
+    }
+
+    func markedSessionAsRead(_ session: ChatSession) { }
+
+    func updateUnreadCounter() {
+        self.newMessagesLabel.text = "\(self.session.unread)"
+        self.newMessagesLabel.isHidden = self.session.unread == 0
+    }
+
+    func scrollToBottom() {
+        if !self.messages.isEmpty {
+            self.tableView.scrollToRow(at: IndexPath(row: self.messages.count - 1, section: 0), at: .bottom, animated: true)
+        }
+    }
+
+    func shouldScrollToBottom() -> Bool {
+        return true
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -77,16 +140,16 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let width = (self.view.frame.width / 2)
-        return ChatTextView.textBounds(text: self.messages[indexPath.row].message, width: width).height + ChatTextView.offset * 2
+        return ChatTextView.textBounds(text: self.messages[indexPath.row].attributed, width: width).height + ChatTextView.offset * 2
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = self.messages[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: message.isIngoing() ? "ingoingCell" : "outgoingCell")!
+        let cell = tableView.dequeueReusableCell(withIdentifier: message.msg.isIngoing() ? "ingoingCell" : "outgoingCell")!
         let textView = cell.viewWithTag(1) as! ChatTextView
-        textView.text = message.message
+        textView.attributedText = message.attributed
 
-        let size = ChatTextView.textBounds(text: message.message, width: self.view.frame.width / 2)
+        let size = ChatTextView.textBounds(text: message.attributed, width: self.view.frame.width / 2)
         textView.setFrameTo(size, parent: self.view.frame)
 
         return cell
@@ -94,46 +157,5 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
 
     @IBAction func backAction(_ sender: AnyObject) {
         self.navigationController?.popViewController(animated: true)
-    }
-}
-
-@IBDesignable
-class ChatTextView: UITextView {
-    static let offset: CGFloat = 10.0
-    static let inset: CGFloat = 5.0
-    static let combined: CGFloat = offset + inset
-
-    @IBInspectable
-    var isIngoing: Bool = true
-
-    static func textBounds(text: String, width: CGFloat) -> CGRect {
-        var bounds = (text as NSString).boundingRect(with: CGSize.init(width: width, height: CGFloat(MAXFLOAT)),
-                                                     options: [.usesLineFragmentOrigin, .usesFontLeading],
-                                                     attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: UIFont.systemFontSize)],
-                                                     context: nil)
-        bounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.width + ChatTextView.inset * 2, height: bounds.height + ChatTextView.inset * 2)
-        return bounds
-    }
-
-    func setFrameTo(_ size: CGRect, parent: CGRect) {
-        let width = size.width
-        let x = self.isIngoing ? ChatTextView.offset : parent.width - width - ChatTextView.offset
-        self.frame = CGRect(x: x,
-                            y: ChatTextView.offset,
-                            width: width,
-                            height: size.height)
-    }
-    
-    override func didMoveToSuperview() {
-        self.textContainerInset = .init(top: ChatTextView.inset, left: ChatTextView.inset, bottom: ChatTextView.inset, right: ChatTextView.inset)
-        self.textContainer.lineFragmentPadding = 0.0
-
-        self.layer.cornerRadius = 10.0
-        self.layer.borderWidth = 1.0
-        self.layer.borderColor = self.tintColor.cgColor
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
     }
 }

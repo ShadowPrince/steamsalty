@@ -24,7 +24,7 @@ extension SteamPollResponse: Decodable {
                                     let timestamp = try UInt64.decode(json["utc_timestamp"])
                                     let from = try SteamUserId.decode(json["accountid_from"])
 
-                                    if let type = try SteamEvent.EventType(rawValue: $0 => "type") {
+                                    if let type = try SteamEvent.EventType(rawValue: json => "type") {
                                         switch type {
                                         case .chatMessage:
                                             return SteamChatMessageEvent(type: type, timestamp: timestamp, from: from, message: SteamChatMessage(author: from, message: try json => "text", timestamp: timestamp))
@@ -64,6 +64,7 @@ class SteamPersonaStateEvent: SteamEvent {
     enum State: Int {
         case online = 1
         case away = 3
+        case offline = 0
         case unknown = -1
     }
 

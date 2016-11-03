@@ -19,8 +19,19 @@ class SteamPollManager {
     static let shared = SteamPollManager()
     var delegates = [SteamPollManagerDelegate]()
 
+    func initialize() {
+        do {
+            try SteamApi.sharedInit()
+        } catch let e {
+            self.delegates.forEach {
+                $0.pollError(e, manager: self)
+            }
+        }
+    }
+    
     func start() {
         self.queue.addOperation {
+            print("Pollin")
             SteamApi.shared.poll { (result, error) in
                 if error == nil {
                     print(result!)
@@ -29,15 +40,31 @@ class SteamPollManager {
                             d.pollReceived(event: event, manager: self)
                         })
                     }
-                } else {
-                    print(error!)
-                    self.delegates.forEach({ (d) in
-                        d.pollError(error!, manager: self)
-                    })
-                }
 
-                Thread.sleep(forTimeInterval: 1.0)
-                self.start()
+                    self.start()
+                } else if let error = error {
+                    print(error)
+                    
+                    if let error = error as? SteamApi.RequestError {
+                        switch error {
+                        case .PollError(let reason) where reason == "Not Logged On":
+                            print("Performing re-initialization due to poll error")
+                            self.initialize()
+                            self.start()
+                            return
+                        case .PollTimeout:
+                            self.start()
+                            return
+                        default:
+                            Thread.sleep(forTimeInterval: 5.0)
+                            self.start()
+                        }
+
+                        self.delegates.forEach {
+                            $0.pollError(error, manager: self)
+                        }
+                    }
+                }
             }
         }
     }

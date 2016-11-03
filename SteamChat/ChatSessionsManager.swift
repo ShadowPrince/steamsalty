@@ -9,16 +9,24 @@
 import Foundation
 
 class ChatSession: NSObject {
-    let user: SteamUser
+    var user: SteamUser
     var messages = [SteamChatMessage]()
+    var unread: Int = 0
     
     init(user: SteamUser) {
         self.user = user
+    }
+
+    override var description: String {
+        return self.user.name
     }
 }
 
 protocol ChatSessionManagerDelegate {
     func receivedMessages(_ messages: [SteamChatMessage])
+    func updateUserStatus()
+    func markedSessionAsRead(_ session: ChatSession)
+    func updatedNextElement()
 }
 
 class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollManagerDelegate {
@@ -38,12 +46,39 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
         switch event.type {
         case .chatMessage:
             let msgEvent = event as! SteamChatMessageEvent
-            for (i, session) in self.sessions.enumerated() {
-                if session.user.id == event.from {
-                    session.messages.append(msgEvent.message)
-                    OperationQueue.main.addOperation {
-                        self.delegates[i]?.receivedMessages([msgEvent.message])
+            var didRearrange = false
+            if let i = self.sessions.index(where: { $0.user.id == event.from }) {
+                let session = self.sessions[i]
+                session.messages.append(msgEvent.message)
+                session.unread += 1
+                
+                if self.stackIndex != i {
+                    if i != self.stackNextIndex {
+                        swap(&self.sessions[i], &self.sessions[self.stackNextIndex])
                     }
+                    
+                    didRearrange = true
+                }
+                
+                OperationQueue.main.addOperation {
+                    self.delegates[i]?.receivedMessages([msgEvent.message])
+                }
+            }
+
+            if didRearrange {
+                OperationQueue.main.addOperation {
+                    self.delegates.forEach {(_, d) in 
+                        d.updatedNextElement()
+                    }
+                }
+            }
+        case .personaState:
+            if let index = self.sessions.index(where: { $0.user.id == event.from } ) {
+                let stateEvent = event as! SteamPersonaStateEvent
+                self.sessions[index].user.state = stateEvent.state
+                
+                OperationQueue.main.addOperation {
+                    self.delegates[index]?.updateUserStatus()
                 }
             }
         default: break
@@ -85,6 +120,21 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
         }
     }
 
+    func sessionOf(user: SteamUser) -> ChatSession? {
+        for session in self.sessions {
+            if session.user == user {
+                return session
+            }
+        }
+
+        return nil
+    }
+
+    func markAsRead(session: ChatSession) {
+        session.unread = 0
+        self.delegates[-1]?.markedSessionAsRead(session)
+    }
+
     var stackIndex: Int {
         return self.index
     }
@@ -102,6 +152,11 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
     }
 
     func stackDrop() {
+        let oldNext = self.stackNextIndex
         self.sessions.remove(at: self.index)
+
+        if oldNext > self.index {
+            self.index -= 1
+        }
     }
 }

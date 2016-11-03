@@ -13,29 +13,6 @@ protocol SteamApiMethod {
     func request(_ tail: String, parameters: Parameters) -> DataRequest
 }
 
-extension NSRegularExpression {
-    static func matches(in string: String, of pattern: String, options: NSRegularExpression.Options) -> [[String]] {
-        var result = [[String]]()
-        let regex = try! NSRegularExpression(pattern: pattern, options: options)
-        for match in regex.matches(in: string, options: [], range: NSRange(location: 0, length: string.characters.count)) {
-            var matchStrings = [String]()
-            for i in 1..<match.numberOfRanges {
-                matchStrings.append((string as NSString).substring(with: match.rangeAt(i)))
-            }
-
-            result.append(matchStrings)
-        }
-
-        return result
-    }
-}
-
-extension JSONSerialization {
-    static func jsonObject(with string: String, options: JSONSerialization.ReadingOptions) throws -> Any {
-        return try JSONSerialization.jsonObject(with: string.data(using: .utf8)!, options: options)
-    }
-}
-
 class SteamApi {
     enum RequestError: Error {
         case Error(String)
@@ -58,7 +35,7 @@ class SteamApi {
     }
 
     class InternalApi: SteamApiMethod {
-        var requestNumber = 0, messageNumber = 0
+        var requestNumber = 0, messageNumber = 49
         let host, key, id: String
         init(_ host: String, key: String, id: String) {
             self.host = host
@@ -79,7 +56,7 @@ class SteamApi {
     }
     
     static var shared: SteamApi!
-    static func sharedInit() {
+    static func sharedInit() throws {
         var web: String?, host: String?, key: String?, umqid: String?
 
         let request = URLRequest(url: URL(string: "https://steamcommunity.com/chat")!)
@@ -98,18 +75,15 @@ class SteamApi {
             if let data = try? NSURLConnection.sendSynchronousRequest(request, returning: nil),
                let javascript = String(data: data, encoding: .utf8),
                let match = NSRegularExpression.matches(in: javascript, of: "(\\{.*\\})", options: [.dotMatchesLineSeparators, .anchorsMatchLines]).first {
-
-                do {
-                    let jsonObject = try JSONSerialization.jsonObject(with: match[0], options: [])
-                    let dict = jsonObject as! Dictionary<String, Any>
-                    let errorString = dict["error"] as! String
-                    switch errorString {
-                    case "OK":
-                        umqid = dict["umqid"] as? String
-                    default:
-                        break
-                    }
-                } catch { }
+                let jsonObject = try JSONSerialization.jsonObject(with: match[0], options: [])
+                let dict = jsonObject as! Dictionary<String, Any>
+                let errorString = dict["error"] as! String
+                switch errorString {
+                case "OK":
+                    umqid = dict["umqid"] as? String
+                default:
+                    break
+                }
             }
                 
             if let web = web, let umqid = umqid {
@@ -117,23 +91,26 @@ class SteamApi {
                     web: WebApi(web),
                     internal: InternalApi(host, key: key, id: umqid)
                 )
-            } else {
-                print("failure")
+
+                return
             }
         }
+        
+        throw RequestError.Error("Failed to obtain auth data")
     }
 
+    let queue = DispatchQueue(label: "net.shdwprince.SteamApiWorker")
     let web: SteamApiMethod
-    let api: SteamApiMethod
+    let api: InternalApi
     var user: SteamUser?
 
-    init(web: SteamApiMethod, internal api: SteamApiMethod) {
+    init(web: SteamApiMethod, internal api: InternalApi) {
         self.web = web
         self.api = api
     }
 
     func status(handler: @escaping (SteamUser?, [SteamUser]?, Error?) -> ()) {
-        Alamofire.request("https://steamcommunity.com/chat").responseString { (response) in
+        Alamofire.request("https://steamcommunity.com/chat").responseString (queue: self.queue, encoding: .utf8) { (response) in
             var error: Error = RequestError.Error("Request failed")
 
             if let html = response.result.value,
@@ -166,7 +143,7 @@ class SteamApi {
                                           "use_accountids": 1,
                                           "_": UInt64(Date().timeIntervalSince1970), ]
 
-        self.api.request("ISteamWebUserPresenceOAuth/Poll/v0001/", parameters: parameters).responseString { response in
+        self.api.request("ISteamWebUserPresenceOAuth/Poll/v0001/", parameters: parameters).responseString (queue: self.queue, encoding: .utf8) { response in
             var error: Error = RequestError.Error("Request failed")
 
             if let javascript = response.result.value,
@@ -178,6 +155,7 @@ class SteamApi {
 
                     switch errorString {
                     case "OK":
+                        self.api.messageNumber += 1
                         handler(try SteamPollResponse.decode(jsonObject), nil)
                         return
                     case "Timeout":
@@ -195,7 +173,7 @@ class SteamApi {
     }
 
     func chatLog(user identifier: SteamUserId, handler: @escaping ([SteamChatMessage]?, Error?) -> ()) {
-        self.web.request("chat/chatlog/\(identifier)", parameters: [:]).responseJSON { response in
+        self.web.request("chat/chatlog/\(identifier)", parameters: [:]).responseJSON (queue: self.queue, options: []) { response in
             do {
                 handler(try [SteamChatMessage].decode(response.result.value), nil)
             } catch let e {

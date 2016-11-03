@@ -192,7 +192,7 @@ class StackedContainersViewController: UIViewController {
     }
     
     private func foregroundViewToDefaultPosition() {
-        let offset = self.isStackSupportPushing() ? self.headerHeight - 8 + self.topOffset : self.topOffset
+        let offset = self.isStackSupportPushing() ? self.headerHeight - 6 + self.topOffset : self.topOffset
         self.foregroundView.frame = CGRect(x: 0, y: offset, width: self.view.frame.width, height: self.view.frame.height - offset)
     }
     

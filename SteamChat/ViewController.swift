@@ -25,8 +25,8 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
 
         self.delegate = self
 
-        SteamApi.sharedInit()
-        //SteamPollManager.shared.start()
+        SteamPollManager.shared.initialize()
+        SteamPollManager.shared.start()
 
         let navigationController = self.viewControllers.first as! UINavigationController
         navigationController.isNavigationBarHidden = true
