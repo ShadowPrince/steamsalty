@@ -110,9 +110,9 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" tag="3" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="online" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SCv-Mf-Ub4" customClass="PersonaStateLabel" customModule="SteamChat" customModuleProvider="target">
+                                                <label opaque="NO" userInteractionEnabled="NO" tag="3" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="away" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SCv-Mf-Ub4" customClass="PersonaStateLabel" customModule="SteamChat" customModuleProvider="target">
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" red="0.67240644599999999" green="0.77025823270000005" blue="0.60343901200000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" red="0.45882352941176469" green="0.68627450980392157" blue="0.72156862745098038" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView userInteractionEnabled="NO" tag="2" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TbP-cw-eDk" customClass="AvatarImageView" customModule="SteamChat" customModuleProvider="target">
@@ -120,10 +120,11 @@
                                                         <constraint firstAttribute="width" secondItem="TbP-cw-eDk" secondAttribute="height" multiplier="1:1" id="Uuy-7H-xcf"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" tag="4" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kSG-et-GXT" customClass="NewMessagesLabel" customModule="SteamChat" customModuleProvider="target">
+                                                <label opaque="NO" userInteractionEnabled="NO" tag="4" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kSG-et-GXT" customClass="NewMessagesLabel" customModule="SteamChat" customModuleProvider="target">
+                                                    <frame key="frameInset" minX="343" minY="10" width="23.5" height="23.5"/>
                                                     <color key="backgroundColor" red="0.85238381409999997" green="0.0" blue="0.0079798088959999996" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" secondItem="kSG-et-GXT" secondAttribute="height" multiplier="1:1" id="s2J-Dd-JQb"/>
+                                                        <constraint firstAttribute="width" secondItem="kSG-et-GXT" secondAttribute="height" multiplier="1:1" id="0TV-WC-gPo"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -131,13 +132,13 @@
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="kSG-et-GXT" secondAttribute="trailing" id="ACR-HD-dUM"/>
-                                                <constraint firstItem="kSG-et-GXT" firstAttribute="top" secondItem="AuU-e1-aiw" secondAttribute="topMargin" constant="2" id="F36-y1-Ug4"/>
+                                                <constraint firstItem="kSG-et-GXT" firstAttribute="top" secondItem="AuU-e1-aiw" secondAttribute="topMargin" constant="4" id="9db-hz-vfz"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="kSG-et-GXT" secondAttribute="bottom" constant="4" id="AYT-Sy-9Qh"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="kSG-et-GXT" secondAttribute="trailing" constant="8" id="N8F-Z9-RVF"/>
                                                 <constraint firstItem="J8D-Wl-Com" firstAttribute="centerY" secondItem="AuU-e1-aiw" secondAttribute="centerY" id="beC-5x-vM4"/>
                                                 <constraint firstItem="SCv-Mf-Ub4" firstAttribute="leading" secondItem="J8D-Wl-Com" secondAttribute="trailing" constant="8" id="dH3-6J-kVr"/>
                                                 <constraint firstAttribute="bottom" secondItem="TbP-cw-eDk" secondAttribute="bottom" constant="8" id="dJA-l3-dkl"/>
                                                 <constraint firstItem="J8D-Wl-Com" firstAttribute="leading" secondItem="TbP-cw-eDk" secondAttribute="trailing" constant="8" id="egG-6S-4Vg"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="kSG-et-GXT" secondAttribute="bottom" constant="2" id="hYi-gK-w8s"/>
                                                 <constraint firstItem="TbP-cw-eDk" firstAttribute="leading" secondItem="AuU-e1-aiw" secondAttribute="leading" constant="8" id="lCk-El-1Gj"/>
                                                 <constraint firstItem="TbP-cw-eDk" firstAttribute="top" secondItem="AuU-e1-aiw" secondAttribute="top" constant="8" id="uy6-Cc-LyJ"/>
                                                 <constraint firstItem="SCv-Mf-Ub4" firstAttribute="baseline" secondItem="J8D-Wl-Com" secondAttribute="baseline" id="zfs-Hl-BaG"/>
@@ -243,15 +244,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="380"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" text="Dis is message" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Wqx-Uz-VU5">
-                                <frame key="frameInset" minY="341" width="323" height="39"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="39" id="fRT-ci-Dev"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Sbk-0i-SwG">
                                 <color key="backgroundColor" red="0.95197117419999999" green="0.95197117419999999" blue="0.95197117419999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
@@ -345,39 +337,56 @@
                                             <constraint firstAttribute="width" constant="26" id="USc-Or-CCy"/>
                                         </constraints>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i0q-VN-lR5" customClass="NewMessagesLabel" customModule="SteamChat" customModuleProvider="target">
-                                        <color key="backgroundColor" red="0.85238381409999997" green="0.0" blue="0.0079798088959999996" alpha="1" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="i0q-VN-lR5" secondAttribute="height" multiplier="1:1" id="dyO-uV-3xD"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="online" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gcv-dm-DGf" customClass="PersonaStateLabel" customModule="SteamChat" customModuleProvider="target">
                                         <color key="backgroundColor" red="0.23529411759999999" green="0.27450980390000002" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" red="0.78822559179999996" green="0.90293193199999999" blue="0.7073788111" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i0q-VN-lR5" customClass="NewMessagesLabel" customModule="SteamChat" customModuleProvider="target">
+                                        <frame key="frameInset" minX="346" minY="5" width="20.5" height="20.5"/>
+                                        <color key="backgroundColor" red="0.85238381409999997" green="0.0" blue="0.0079798088959999996" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="i0q-VN-lR5" secondAttribute="height" multiplier="1:1" id="Dfk-HP-MSw"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.23529411759999999" green="0.27450980390000002" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="i0q-VN-lR5" secondAttribute="trailing" constant="29" id="1PH-Uc-uTp"/>
+                                    <constraint firstAttribute="trailing" secondItem="i0q-VN-lR5" secondAttribute="trailing" constant="8" id="0e1-hJ-Vmc"/>
                                     <constraint firstAttribute="height" constant="30" id="4ud-om-1hE"/>
                                     <constraint firstItem="KFa-Ik-Y4O" firstAttribute="centerY" secondItem="akC-Zp-AL6" secondAttribute="centerY" id="854-uI-hKl"/>
                                     <constraint firstItem="KFa-Ik-Y4O" firstAttribute="centerX" secondItem="akC-Zp-AL6" secondAttribute="centerX" id="9JQ-ax-ZAO"/>
                                     <constraint firstItem="Gcv-dm-DGf" firstAttribute="baseline" secondItem="KFa-Ik-Y4O" secondAttribute="baseline" id="DrY-l4-cul"/>
                                     <constraint firstItem="Gcv-dm-DGf" firstAttribute="leading" secondItem="KFa-Ik-Y4O" secondAttribute="trailing" constant="8" id="PKz-0d-pTA"/>
-                                    <constraint firstItem="i0q-VN-lR5" firstAttribute="top" secondItem="KFa-Ik-Y4O" secondAttribute="top" id="Tu8-rv-IGM"/>
-                                    <constraint firstItem="i0q-VN-lR5" firstAttribute="bottom" secondItem="KFa-Ik-Y4O" secondAttribute="bottom" id="fAi-qX-PjJ"/>
+                                    <constraint firstItem="i0q-VN-lR5" firstAttribute="top" secondItem="akC-Zp-AL6" secondAttribute="top" constant="4" id="dDn-wo-aDW"/>
                                     <constraint firstItem="za2-6a-0ZS" firstAttribute="centerY" secondItem="KFa-Ik-Y4O" secondAttribute="centerY" id="gLN-2U-J3J"/>
+                                    <constraint firstAttribute="bottom" secondItem="i0q-VN-lR5" secondAttribute="bottom" constant="4" id="jSP-f9-0ez"/>
                                     <constraint firstItem="KFa-Ik-Y4O" firstAttribute="leading" secondItem="za2-6a-0ZS" secondAttribute="trailing" constant="8.5" id="l1s-WE-hBl"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i36-Im-3UK">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="hk6-Pm-8th"/>
+                                    <constraint firstAttribute="width" constant="30" id="swu-wr-Umr"/>
+                                </constraints>
+                                <state key="normal" title=":)"/>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Dis is message" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Wqx-Uz-VU5">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="39" id="fRT-ci-Dev"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="i36-Im-3UK" firstAttribute="centerY" secondItem="Wqx-Uz-VU5" secondAttribute="centerY" id="5Ce-9g-ucG"/>
                             <constraint firstItem="Sbk-0i-SwG" firstAttribute="top" secondItem="akC-Zp-AL6" secondAttribute="bottom" id="5SU-bZ-H9e"/>
                             <constraint firstAttribute="trailing" secondItem="Sbk-0i-SwG" secondAttribute="trailing" id="Dgu-0r-4RT"/>
                             <constraint firstItem="Wqx-Uz-VU5" firstAttribute="leading" secondItem="Ows-XH-n9G" secondAttribute="leading" id="LgC-64-pFe"/>
@@ -386,12 +395,15 @@
                             <constraint firstItem="akC-Zp-AL6" firstAttribute="top" secondItem="iBm-lD-BoR" secondAttribute="bottom" id="Tdr-p3-qj8"/>
                             <constraint firstAttribute="trailingMargin" secondItem="akC-Zp-AL6" secondAttribute="trailing" constant="-16" id="XGR-E1-LAZ"/>
                             <constraint firstItem="F7h-8j-RVB" firstAttribute="top" secondItem="Wqx-Uz-VU5" secondAttribute="bottom" id="bZ2-Y7-mkC"/>
+                            <constraint firstAttribute="trailing" secondItem="i36-Im-3UK" secondAttribute="trailing" constant="8" id="dE1-Eh-r06"/>
                             <constraint firstItem="Wqx-Uz-VU5" firstAttribute="top" secondItem="Sbk-0i-SwG" secondAttribute="bottom" id="jB7-7G-1vR"/>
+                            <constraint firstItem="i36-Im-3UK" firstAttribute="leading" secondItem="Wqx-Uz-VU5" secondAttribute="trailing" constant="8" id="vYf-UK-SC5"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="avatarImageView" destination="za2-6a-0ZS" id="FnQ-2e-e18"/>
                         <outlet property="backButton" destination="Ibz-we-hfH" id="DJM-Yh-daS"/>
+                        <outlet property="bottomConstraint" destination="bZ2-Y7-mkC" id="dGi-VK-DU9"/>
                         <outlet property="newMessagesLabel" destination="i0q-VN-lR5" id="VMe-gQ-R90"/>
                         <outlet property="personaStateLabel" destination="Gcv-dm-DGf" id="Cvi-gz-ixW"/>
                         <outlet property="tableView" destination="Sbk-0i-SwG" id="maH-Nl-hZa"/>

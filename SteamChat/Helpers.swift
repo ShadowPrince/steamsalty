@@ -39,10 +39,21 @@ extension JSONSerialization {
     }
 }
 
+extension UIColor {
+    convenience init(rgb: Int, alpha: CGFloat = 1.0) {
+        let r = CGFloat((rgb & 0xff0000) >> 16) / 255
+        let g = CGFloat((rgb & 0x00ff00) >>  8) / 255
+        let b = CGFloat((rgb & 0x0000ff)      ) / 255
+
+        self.init(red: r, green: g, blue: b, alpha: alpha)
+    }
+    
+}
+
 class MessageParser {
     static let shared = MessageParser()
 
-    var cache = [String: UIImage]()
+    var cache = [String: Any]()
     
     func emoteUrl(_ named: String) -> URL {
         return URL(string: "https://steamcommunity-a.akamaihd.net/economy/emoticon/\(named)")!
@@ -61,10 +72,11 @@ class MessageParser {
                     self.cache[emoteName] = UIImage(data: data)
                 } catch let e {
                     print(e)
+                    self.cache[emoteName] = e
                 }
             }
 
-            if let image = self.cache[emoteName] {
+            if let image = self.cache[emoteName] as? UIImage {
                 let attachment = NSTextAttachment()
                 attachment.image = image
                 let imageString = NSAttributedString(attachment: attachment)

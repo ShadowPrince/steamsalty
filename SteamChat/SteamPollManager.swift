@@ -9,8 +9,9 @@
 import Foundation
 
 protocol SteamPollManagerDelegate {
-    func pollReceived(event: SteamEvent, manager: SteamPollManager)
+    func pollReceived(events: [SteamEvent], manager: SteamPollManager)
     func pollError(_ error: Error, manager: SteamPollManager)
+    func pollStatus(_ user: SteamUser, contacts: [SteamUser], emotes: [String])
 }
 
 class SteamPollManager {
@@ -22,6 +23,11 @@ class SteamPollManager {
     func initialize() {
         do {
             try SteamApi.sharedInit()
+            SteamApi.shared.status { (user, contacts, error) in
+                if error == nil {
+                    self.delegates.forEach { $0.pollStatus(user!, contacts: contacts!, emotes: []) }
+                }
+            }
         } catch let e {
             self.delegates.forEach {
                 $0.pollError(e, manager: self)
@@ -35,12 +41,7 @@ class SteamPollManager {
             SteamApi.shared.poll { (result, error) in
                 if error == nil {
                     print(result!)
-                    for event in result!.events {
-                        self.delegates.forEach({ (d) in
-                            d.pollReceived(event: event, manager: self)
-                        })
-                    }
-
+                    self.delegates.forEach { $0.pollReceived(events: result!.events, manager: self) }
                     self.start()
                 } else if let error = error {
                     print(error)

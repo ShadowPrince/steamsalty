@@ -102,7 +102,6 @@ class SteamApi {
     let queue = DispatchQueue(label: "net.shdwprince.SteamApiWorker")
     let web: SteamApiMethod
     let api: InternalApi
-    var user: SteamUser?
 
     init(web: SteamApiMethod, internal api: InternalApi) {
         self.web = web
@@ -124,7 +123,6 @@ class SteamApi {
                     let selfUser = try SteamUser.decode(selfObject)
                     let friendsArray = try [SteamUser].decode(friendsObject)
                     
-                    self.user = selfUser
                     handler(selfUser, friendsArray, nil)
                     return
                 } catch let e {

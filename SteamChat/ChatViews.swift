@@ -53,6 +53,11 @@ class NewMessagesLabel: UILabel {
         super.awakeFromNib()
 
         self.layer.masksToBounds = true
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
         self.layer.cornerRadius = self.frame.width / 2
     }
 }
@@ -91,14 +96,17 @@ class PersonaStateLabel: UILabel {
     func setToState(_ state: SteamPersonaStateEvent.State) {
         switch state {
         case .online:
-            self.textColor = UIColor.green
+            self.textColor = UIColor.init(rgb: 0xABC49A)
             self.text = "online"
         case .away:
-            self.textColor = UIColor.darkGray
+            self.textColor = UIColor.init(rgb: 0x75AFB8)
             self.text = "away"
         case .offline:
-            self.textColor = UIColor.gray
+            self.textColor = UIColor.lightGray
             self.text = "offline"
+        case .snooze:
+            self.textColor = UIColor.init(rgb: 0x75AFB8)
+            self.text = "snooze"
         default:
             self.textColor = UIColor.black
             self.text = "???"

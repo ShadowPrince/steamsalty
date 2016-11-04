@@ -10,29 +10,29 @@ import Foundation
 import UIKit
 
 class ActiveChatSessionsViewController: StackedContainersViewController {
-    override func viewWillAppear(_ animated: Bool) {
+    override func awakeFromNib() {
         self.dataSource = ChatSessionsManager.shared
-        super.viewWillAppear(animated)
     }
 }
 
-struct SteamChatParsedMessage {
-    var attributed: NSAttributedString!
-    var msg: SteamChatMessage!
-}
-
-class ChatViewController: StackedContainerViewController, UITableViewDataSource, UITableViewDelegate, ChatSessionManagerDelegate {
+class ChatViewController: StackedContainerViewController, UITableViewDataSource, UITableViewDelegate, ChatSessionsManagerDelegate {
+    struct ParsedMessage {
+        var attributed: NSAttributedString!
+        var msg: SteamChatMessage!
+    }
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var newMessagesLabel: NewMessagesLabel!
     @IBOutlet weak var avatarImageView: AvatarImageView!
     @IBOutlet weak var personaStateLabel: PersonaStateLabel!
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
 
     private var isForeground: Bool = false
     private var index: Int?
-    private var messages = [SteamChatParsedMessage]()
-    private var session: ChatSession!
+    private var messages = [ParsedMessage]()
+    private var session: ChatSessionsManager.Session!
     
     private var textBounds = [Int: CGRect]()
 
@@ -49,11 +49,11 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
         self.session = ChatSessionsManager.shared.sessions[index]
         self.messages.removeAll()
         self.appendMessages(session.messages)
+        self.personaStateLabel.setToState(session.user.state)
 
         self.tableView.reloadData()
         self.titleLabel.text = "\(self.session.user.name)"
         self.avatarImageView.loadImage(at: self.session.user.avatar)
-        self.updateUserStatus()
 
         ChatSessionsManager.shared.delegates[index] = self
     }
@@ -75,7 +75,7 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
         self.backButton.isHidden = true
     }
 
-    func receivedMessages(_ messages: [SteamChatMessage]) {
+    func sessionReceivedMessages(_ messages: [SteamChatMessage], in session: ChatSessionsManager.Session, from: ChatSessionsManager) {
         let lastIndex = self.messages.count
         self.appendMessages(messages)
 
@@ -84,13 +84,9 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
             indexes.append(IndexPath.init(row: i, section: 0))
         }
 
-        OperationQueue.main.addOperation {
-            self.tableView.insertRows(at: indexes, with: .automatic)
-        }
+        self.tableView.insertRows(at: indexes, with: .automatic)
 
-        if !self.isForeground {
-            self.updateUnreadCounter()
-        } else {
+        if self.isForeground {
             ChatSessionsManager.shared.markAsRead(session: self.session)
             OperationQueue.main.addOperation {
                 if self.shouldScrollToBottom() {
@@ -100,24 +96,20 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
         }
     }
 
-    func appendMessages(_ messages: [SteamChatMessage]) {
-        for msg in messages {
-            self.messages.append(SteamChatParsedMessage(attributed: MessageParser.shared.parseMessage(msg.message), msg: msg))
-        }
-    }
-
-    func updatedNextElement() {
+    func sessionUpdatedNext(at index: Int, from: ChatSessionsManager) {
         if self.isForeground == false, let index = self.index {
             self.setIndex(index)
-            self.updateUnreadCounter()
+            OperationQueue.main.addOperation {
+                self.updateUnreadCounter()
+            }
         }
     }
 
-    func updateUserStatus() {
-        self.personaStateLabel.setToState(self.session.user.state)
+    func sessionUpdatedStatus(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) {
+        self.personaStateLabel.setToState(session.user.state)
     }
 
-    func markedSessionAsRead(_ session: ChatSession) { }
+    func sessionMarkedAsRead(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) { }
 
     func updateUnreadCounter() {
         self.newMessagesLabel.text = "\(self.session.unread)"
@@ -134,6 +126,12 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
         return true
     }
 
+    func appendMessages(_ messages: [SteamChatMessage]) {
+        for msg in messages {
+            self.messages.append(ParsedMessage(attributed: MessageParser.shared.parseMessage(msg.message), msg: msg))
+        }
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.messages.count
     }
@@ -145,7 +143,7 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = self.messages[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: message.msg.isIngoing() ? "ingoingCell" : "outgoingCell")!
+        let cell = tableView.dequeueReusableCell(withIdentifier: message.msg.author == self.session.user.id ? "ingoingCell" : "outgoingCell")!
         let textView = cell.viewWithTag(1) as! ChatTextView
         textView.attributedText = message.attributed
 

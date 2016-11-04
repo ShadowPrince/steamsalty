@@ -65,6 +65,7 @@ class SteamPersonaStateEvent: SteamEvent {
         case online = 1
         case away = 3
         case offline = 0
+        case snooze = 4
         case unknown = -1
     }
 
@@ -89,10 +90,6 @@ struct SteamChatMessage {
     let author: SteamUserId
     let message: String
     let timestamp: UInt64
-
-    func isIngoing() -> Bool {
-        return self.author != SteamApi.shared.user?.id
-    }
 }
 
 extension SteamChatMessage: Decodable {
@@ -114,6 +111,10 @@ struct SteamUser: Equatable {
     var avatar: URL {
         let prefix = avatarHash.substring(to: avatarHash.index(avatarHash.startIndex, offsetBy: 2))
         return URL.init(string: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/\(prefix)/\(avatarHash)_medium.jpg")!
+    }
+
+    var lastMessageDate: Date {
+        return Date.init(timeIntervalSince1970: Double(self.lastMessageTimestamp))
     }
 
     public static func ==(lhs: SteamUser, rhs: SteamUser) -> Bool {

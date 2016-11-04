@@ -9,44 +9,80 @@
 import Foundation
 import UIKit
 
-class ContactsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SteamPollManagerDelegate, ChatSessionManagerDelegate {
+extension Array where Element: ContactsViewController.Item {
+    func index(of userId: SteamUserId) -> Int? {
+        return self.index(where: { $0.user.id == userId })
+    }
+
+    func index(of user: SteamUser) -> Int? {
+        return self.index(where: { $0.user == user })
+    }
+}
+
+class ContactsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SteamPollManagerDelegate, ChatSessionsManagerDelegate {
+    class Item: CustomStringConvertible {
+        var user: SteamUser
+        var session: ChatSessionsManager.Session?
+        var lastUpdated: Date
+
+        init(user: SteamUser, session: ChatSessionsManager.Session?) {
+            self.user = user
+            self.session = session
+            self.lastUpdated = Date()
+        }
+
+        var description: String {
+            return self.user.name
+        }
+    }
+
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var selfAvatarImageView: AvatarImageView!
     @IBOutlet weak var selfNameLabel: UILabel!
     @IBOutlet weak var selfStateLabel: UILabel!
 
-    var users = [SteamUser]()
+    var items = [Item]()
     let pollQueue = OperationQueue()
 
-    override func viewWillAppear(_ animated: Bool) {
+    override func awakeFromNib() {
         ChatSessionsManager.shared.delegates[-1] = self
         SteamPollManager.shared.delegates.append(self)
-        SteamApi.shared.status { (user, friends, error) in
-            if error == nil {
-                self.users = friends!
-                self.users.sort(by: { $0.0.name > $0.1.name })
+    }
 
-                OperationQueue.main.addOperation {
-                    self.selfAvatarImageView.loadImage(at: user!.avatar)
-                    self.selfNameLabel.text = user?.name
-                    self.selfStateLabel.text = "---"
-                    self.tableView.reloadData()
+    // polling
+    func pollReceived(events: [SteamEvent], manager: SteamPollManager) {
+        var indexPaths = [IndexPath]()
+        for event in events {
+            switch event.type {
+            case .personaState:
+                let e = event as! SteamPersonaStateEvent
+                if let index = self.items.index(of: e.from) {
+                    self.items[index].user.state = e.state
+                    indexPaths.append(IndexPath(row: index, section: 0))
                 }
+            default: break
             }
+        }
+                    
+        OperationQueue.main.addOperation {
+            self.tableView.reloadRows(at: indexPaths, with: .automatic)
         }
     }
 
-    func pollReceived(event: SteamEvent, manager: SteamPollManager) {
-        switch event.type {
-        case .personaState:
-            let e = event as! SteamPersonaStateEvent
-            if let index = self.users.index(where: { $0.id == e.from }) {
-                self.users[index].state = e.state
-                OperationQueue.main.addOperation {
-                    self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-                }
-            }
-        default: break
+    func pollStatus(_ user: SteamUser, contacts: [SteamUser], emotes: [String]) {
+        self.items.removeAll()
+        for user in contacts {
+            let item = Item(user: user, session: nil)
+            item.lastUpdated = user.lastMessageDate
+            
+            self.items.append(item)
+        }
+
+        OperationQueue.main.addOperation {
+            self.selfAvatarImageView.loadImage(at: user.avatar)
+            self.selfNameLabel.text = user.name
+            self.selfStateLabel.text = "---"
+            self.tableView.reloadData()
         }
     }
 
@@ -54,36 +90,57 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
 
     }
 
-    func markedSessionAsRead(_ session: ChatSession) {
-        let index = self.users.index(where: { $0 == session.user}) {
-
+    // chat sessions
+    func sessionReceivedMessages(_ messages: [SteamChatMessage], in session: ChatSessionsManager.Session, from: ChatSessionsManager) {
+        if let i = self.items.index(of: session.user) {
+            self.items[i].lastUpdated = Date()
+            self.items[i].session = session
+            self.items.sort(by: { $0.0.lastUpdated > $0.1.lastUpdated })
+            OperationQueue.main.addOperation {
+                self.tableView.reloadData()
+            }
         }
     }
 
-    func receivedMessages(_ messages: [SteamChatMessage]) { }
-    func updatedNextElement() { }
-    func updateUserStatus() { }
+    func sessionMarkedAsRead(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) {
+        if let i = self.items.index(of: session.user) {
+            self.items[i].session = session
+            OperationQueue.main.addOperation {
+                self.tableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
+            }
+        }
+    }
 
+    func sessionUpdatedStatus(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) { }
+    func sessionUpdatedNext(at index: Int, from: ChatSessionsManager) { }
+
+    // table
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.users.count
+        return self.items.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
-        let user = self.users[indexPath.row]
-        (cell.viewWithTag(1) as! UILabel).text = user.name
-        (cell.viewWithTag(2) as! AvatarImageView).loadImage(at: user.avatar)
-        (cell.viewWithTag(3) as! PersonaStateLabel).setToState(user.state)
+        let item = self.items[indexPath.row]
+        (cell.viewWithTag(1) as! UILabel).text = item.user.name
+        (cell.viewWithTag(2) as! AvatarImageView).loadImage(at: item.user.avatar)
+        (cell.viewWithTag(3) as! PersonaStateLabel).setToState(item.user.state)
+        
+        let unreadLabel = cell.viewWithTag(4) as! UILabel
+        let unreadMessages = item.session?.unread ?? 0
+        unreadLabel.isHidden = unreadMessages == 0
+        unreadLabel.text = "\(unreadMessages)"
+        
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.performSegue(withIdentifier: "toChat", sender: self.users[indexPath.row])
+        self.performSegue(withIdentifier: "toChat", sender: self.items[indexPath.row])
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toChat" {
-            ChatSessionsManager.shared.openChat(with: sender as! SteamUser)
+            ChatSessionsManager.shared.openChat(with: (sender as! Item).user)
         }
     }
 }
