@@ -10,6 +10,7 @@ import Foundation
 import Decodable
 
 typealias SteamUserId = UInt64
+typealias SteamEmoteName = String
 
 struct SteamPollResponse {
     let timestamp: UInt64

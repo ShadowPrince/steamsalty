@@ -11,7 +11,7 @@ import Foundation
 protocol SteamPollManagerDelegate {
     func pollReceived(events: [SteamEvent], manager: SteamPollManager)
     func pollError(_ error: Error, manager: SteamPollManager)
-    func pollStatus(_ user: SteamUser, contacts: [SteamUser], emotes: [String])
+    func pollStatus(_ user: SteamUser, contacts: [SteamUser], emotes: [SteamEmoteName])
 }
 
 class SteamPollManager {
@@ -20,22 +20,29 @@ class SteamPollManager {
     static let shared = SteamPollManager()
     var delegates = [SteamPollManagerDelegate]()
 
-    func initialize() {
+    func initialize() throws {
         do {
             try SteamApi.sharedInit()
-            SteamApi.shared.status { (user, contacts, error) in
+            SteamApi.shared.status { (user, contacts, emotes, error) in
                 if error == nil {
-                    self.delegates.forEach { $0.pollStatus(user!, contacts: contacts!, emotes: []) }
+                    self.delegates.forEach { $0.pollStatus(user!, contacts: contacts!, emotes: emotes!) }
                 }
             }
         } catch let e {
             self.delegates.forEach {
                 $0.pollError(e, manager: self)
             }
+
+            throw e
         }
     }
     
     func start() {
+        if SteamApi.shared == nil {
+            print("API not initialized")
+            return
+        }
+        
         self.queue.addOperation {
             print("Pollin")
             SteamApi.shared.poll { (result, error) in
@@ -50,8 +57,10 @@ class SteamPollManager {
                         switch error {
                         case .PollError(let reason) where reason == "Not Logged On":
                             print("Performing re-initialization due to poll error")
-                            self.initialize()
-                            self.start()
+                            do {
+                                try self.initialize()
+                                self.start()
+                            } catch { }
                             return
                         case .PollTimeout:
                             self.start()

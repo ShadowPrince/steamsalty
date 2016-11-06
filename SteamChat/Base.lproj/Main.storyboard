@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Dor-yg-554">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
@@ -20,29 +20,41 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <webView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jbr-UT-8lm">
-                                <frame key="frameInset" minY="20" width="375" height="600"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jbr-UT-8lm">
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </webView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Fz-fR-rDP">
-                                <frame key="frameInset" minX="133" minY="629" width="108" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="auth completed"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Fz-fR-rDP">
+                                <state key="normal" title="Proceed"/>
                                 <connections>
-                                    <segue destination="Dor-yg-554" kind="show" id="0dK-BY-rb3"/>
+                                    <action selector="authCompletedAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0oC-zF-Bmi"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Login as usual, and touch this button:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r26-c6-g0D">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Jbr-UT-8lm" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="1nc-V5-FgZ"/>
+                            <constraint firstItem="r26-c6-g0D" firstAttribute="baseline" secondItem="4Fz-fR-rDP" secondAttribute="baseline" id="7kl-Jl-4nc"/>
+                            <constraint firstItem="4Fz-fR-rDP" firstAttribute="leading" secondItem="r26-c6-g0D" secondAttribute="trailing" constant="8" id="GRk-1a-9mM"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="4Fz-fR-rDP" secondAttribute="bottom" constant="8" id="bm4-tc-bRO"/>
+                            <constraint firstItem="Jbr-UT-8lm" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="bqc-Gz-46G"/>
+                            <constraint firstAttribute="trailing" secondItem="Jbr-UT-8lm" secondAttribute="trailing" id="cyC-XA-Q92"/>
+                            <constraint firstItem="4Fz-fR-rDP" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="d0R-pm-5c7"/>
+                            <constraint firstItem="4Fz-fR-rDP" firstAttribute="top" secondItem="Jbr-UT-8lm" secondAttribute="bottom" constant="8" id="lrv-YO-QbK"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="webView" destination="Jbr-UT-8lm" id="9cn-Zi-bLC"/>
+                        <segue destination="Dor-yg-554" kind="show" identifier="proceedSegue" id="ApI-nO-1Tp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="140" y="139"/>
+            <point key="canvasLocation" x="140" y="138.98050974512745"/>
         </scene>
         <!--Active Chat Sessions View Controller-->
         <scene sceneID="A6W-mU-IBU">
@@ -85,7 +97,7 @@
         <!--Contacts View Controller-->
         <scene sceneID="233-hF-wrc">
             <objects>
-                <viewController id="dRq-t9-oNj" customClass="ContactsViewController" customModule="SteamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="dRq-t9-oNj" customClass="ContactsViewController" customModule="SteamChat" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="IBy-3k-grc"/>
                         <viewControllerLayoutGuide type="bottom" id="sSL-hX-nlq"/>
@@ -120,8 +132,7 @@
                                                         <constraint firstAttribute="width" secondItem="TbP-cw-eDk" secondAttribute="height" multiplier="1:1" id="Uuy-7H-xcf"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" tag="4" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kSG-et-GXT" customClass="NewMessagesLabel" customModule="SteamChat" customModuleProvider="target">
-                                                    <frame key="frameInset" minX="343" minY="10" width="23.5" height="23.5"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" tag="4" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kSG-et-GXT" customClass="NewMessagesLabel" customModule="SteamChat" customModuleProvider="target">
                                                     <color key="backgroundColor" red="0.85238381409999997" green="0.0" blue="0.0079798088959999996" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="kSG-et-GXT" secondAttribute="height" multiplier="1:1" id="0TV-WC-gPo"/>
@@ -158,8 +169,8 @@
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="k6W-Ph-ZCp" customClass="AvatarImageView" customModule="SteamChat" customModuleProvider="target">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="VJh-on-x0q"/>
-                                    <constraint firstAttribute="width" constant="30" id="cL0-kh-py1"/>
+                                    <constraint firstAttribute="height" constant="20" id="VJh-on-x0q"/>
+                                    <constraint firstAttribute="width" constant="20" id="cL0-kh-py1"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="online" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DSg-uv-VgD" customClass="PersonaStateLabel" customModule="SteamChat" customModuleProvider="target">
@@ -167,22 +178,15 @@
                                 <color key="textColor" red="0.78822559179999996" green="0.90293193199999999" blue="0.7073788111" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FiI-qE-bSh">
-                                <state key="normal" title="S">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.23529411759999999" green="0.27450980390000002" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="DSg-uv-VgD" firstAttribute="baseline" secondItem="jQ0-3p-WSe" secondAttribute="baseline" id="9jO-d1-cvu"/>
-                            <constraint firstItem="FiI-qE-bSh" firstAttribute="leading" secondItem="kb5-BJ-qxc" secondAttribute="leadingMargin" id="B6I-Ts-wPN"/>
                             <constraint firstItem="jQ0-3p-WSe" firstAttribute="top" secondItem="IBy-3k-grc" secondAttribute="bottom" id="HyL-nt-911"/>
                             <constraint firstItem="DSg-uv-VgD" firstAttribute="leading" secondItem="jQ0-3p-WSe" secondAttribute="trailing" constant="8" id="KSP-CG-HVg"/>
                             <constraint firstItem="k6W-Ph-ZCp" firstAttribute="centerY" secondItem="jQ0-3p-WSe" secondAttribute="centerY" id="WSf-dp-bk5"/>
                             <constraint firstAttribute="bottom" secondItem="8iP-HF-Ziv" secondAttribute="bottom" id="ZK0-p4-bO9"/>
                             <constraint firstItem="8iP-HF-Ziv" firstAttribute="top" secondItem="k6W-Ph-ZCp" secondAttribute="bottom" constant="8" id="igt-ua-GRk"/>
-                            <constraint firstItem="FiI-qE-bSh" firstAttribute="top" secondItem="kb5-BJ-qxc" secondAttribute="topMargin" constant="16" id="ly6-Ur-TPA"/>
                             <constraint firstItem="8iP-HF-Ziv" firstAttribute="leading" secondItem="kb5-BJ-qxc" secondAttribute="leading" id="qey-kR-7bk"/>
                             <constraint firstItem="jQ0-3p-WSe" firstAttribute="centerX" secondItem="kb5-BJ-qxc" secondAttribute="centerX" id="t4I-Ko-oG3"/>
                             <constraint firstAttribute="trailing" secondItem="8iP-HF-Ziv" secondAttribute="trailing" id="yk1-Ls-mOF"/>
@@ -230,12 +234,12 @@
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DSo-Jf-rav" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="964" y="139"/>
+            <point key="canvasLocation" x="962" y="139"/>
         </scene>
         <!--Chat View Controller-->
         <scene sceneID="5WR-tA-2FO">
             <objects>
-                <viewController id="z8P-8h-BKe" customClass="ChatViewController" customModule="SteamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="z8P-8h-BKe" customClass="ChatViewController" customModule="SteamChat" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="iBm-lD-BoR"/>
                         <viewControllerLayoutGuide type="bottom" id="F7h-8j-RVB"/>
@@ -321,16 +325,6 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ibz-we-hfH">
-                                        <frame key="frameInset" width="47" height="29"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="&lt;">
-                                            <color key="titleColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="backAction:" destination="z8P-8h-BKe" eventType="touchUpInside" id="hYd-DB-hnl"/>
-                                        </connections>
-                                    </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="za2-6a-0ZS" customClass="AvatarImageView" customModule="SteamChat" customModuleProvider="target">
                                         <constraints>
                                             <constraint firstAttribute="height" constant="26" id="5gn-vo-GZ8"/>
@@ -343,8 +337,7 @@
                                         <color key="textColor" red="0.78822559179999996" green="0.90293193199999999" blue="0.7073788111" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i0q-VN-lR5" customClass="NewMessagesLabel" customModule="SteamChat" customModuleProvider="target">
-                                        <frame key="frameInset" minX="346" minY="5" width="20.5" height="20.5"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i0q-VN-lR5" customClass="NewMessagesLabel" customModule="SteamChat" customModuleProvider="target">
                                         <color key="backgroundColor" red="0.85238381409999997" green="0.0" blue="0.0079798088959999996" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="i0q-VN-lR5" secondAttribute="height" multiplier="1:1" id="Dfk-HP-MSw"/>
@@ -353,18 +346,35 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ibz-we-hfH">
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="80" id="Hem-RH-Lcl"/>
+                                        </constraints>
+                                        <state key="normal" title="←">
+                                            <color key="titleColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="backAction:" destination="z8P-8h-BKe" eventType="touchUpInside" id="hYd-DB-hnl"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.23529411759999999" green="0.27450980390000002" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="i0q-VN-lR5" secondAttribute="trailing" constant="8" id="0e1-hJ-Vmc"/>
+                                    <constraint firstAttribute="trailing" secondItem="i0q-VN-lR5" secondAttribute="trailing" constant="32" id="0e1-hJ-Vmc"/>
                                     <constraint firstAttribute="height" constant="30" id="4ud-om-1hE"/>
                                     <constraint firstItem="KFa-Ik-Y4O" firstAttribute="centerY" secondItem="akC-Zp-AL6" secondAttribute="centerY" id="854-uI-hKl"/>
                                     <constraint firstItem="KFa-Ik-Y4O" firstAttribute="centerX" secondItem="akC-Zp-AL6" secondAttribute="centerX" id="9JQ-ax-ZAO"/>
                                     <constraint firstItem="Gcv-dm-DGf" firstAttribute="baseline" secondItem="KFa-Ik-Y4O" secondAttribute="baseline" id="DrY-l4-cul"/>
+                                    <constraint firstAttribute="bottom" secondItem="Ibz-we-hfH" secondAttribute="bottom" id="H3i-vw-y04"/>
                                     <constraint firstItem="Gcv-dm-DGf" firstAttribute="leading" secondItem="KFa-Ik-Y4O" secondAttribute="trailing" constant="8" id="PKz-0d-pTA"/>
+                                    <constraint firstItem="Ibz-we-hfH" firstAttribute="leading" secondItem="akC-Zp-AL6" secondAttribute="leading" constant="8" id="V6C-zF-5zz"/>
                                     <constraint firstItem="i0q-VN-lR5" firstAttribute="top" secondItem="akC-Zp-AL6" secondAttribute="top" constant="4" id="dDn-wo-aDW"/>
                                     <constraint firstItem="za2-6a-0ZS" firstAttribute="centerY" secondItem="KFa-Ik-Y4O" secondAttribute="centerY" id="gLN-2U-J3J"/>
                                     <constraint firstAttribute="bottom" secondItem="i0q-VN-lR5" secondAttribute="bottom" constant="4" id="jSP-f9-0ez"/>
+                                    <constraint firstItem="Ibz-we-hfH" firstAttribute="top" secondItem="akC-Zp-AL6" secondAttribute="top" id="jUr-B1-209"/>
                                     <constraint firstItem="KFa-Ik-Y4O" firstAttribute="leading" secondItem="za2-6a-0ZS" secondAttribute="trailing" constant="8.5" id="l1s-WE-hBl"/>
                                 </constraints>
                             </view>
@@ -390,10 +400,10 @@
                             <constraint firstItem="Sbk-0i-SwG" firstAttribute="top" secondItem="akC-Zp-AL6" secondAttribute="bottom" id="5SU-bZ-H9e"/>
                             <constraint firstAttribute="trailing" secondItem="Sbk-0i-SwG" secondAttribute="trailing" id="Dgu-0r-4RT"/>
                             <constraint firstItem="Wqx-Uz-VU5" firstAttribute="leading" secondItem="Ows-XH-n9G" secondAttribute="leading" id="LgC-64-pFe"/>
-                            <constraint firstItem="akC-Zp-AL6" firstAttribute="leading" secondItem="Ows-XH-n9G" secondAttribute="leadingMargin" constant="-16" id="OCt-LL-oTA"/>
+                            <constraint firstItem="akC-Zp-AL6" firstAttribute="leading" secondItem="Ows-XH-n9G" secondAttribute="leadingMargin" constant="-32" id="OCt-LL-oTA"/>
                             <constraint firstItem="Sbk-0i-SwG" firstAttribute="leading" secondItem="Ows-XH-n9G" secondAttribute="leading" id="TCK-gR-vY8"/>
                             <constraint firstItem="akC-Zp-AL6" firstAttribute="top" secondItem="iBm-lD-BoR" secondAttribute="bottom" id="Tdr-p3-qj8"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="akC-Zp-AL6" secondAttribute="trailing" constant="-16" id="XGR-E1-LAZ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="akC-Zp-AL6" secondAttribute="trailing" constant="-32" id="XGR-E1-LAZ"/>
                             <constraint firstItem="F7h-8j-RVB" firstAttribute="top" secondItem="Wqx-Uz-VU5" secondAttribute="bottom" id="bZ2-Y7-mkC"/>
                             <constraint firstAttribute="trailing" secondItem="i36-Im-3UK" secondAttribute="trailing" constant="8" id="dE1-Eh-r06"/>
                             <constraint firstItem="Wqx-Uz-VU5" firstAttribute="top" secondItem="Sbk-0i-SwG" secondAttribute="bottom" id="jB7-7G-1vR"/>
@@ -416,7 +426,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="BbL-29-uOA"/>
         <segue reference="6W0-gB-E9y"/>
+        <segue reference="BbL-29-uOA"/>
     </inferredMetricsTieBreakers>
 </document>

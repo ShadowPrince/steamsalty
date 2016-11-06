@@ -1,4 +1,4 @@
-//
+
 //  ChatViewController.swift
 //  SteamChat
 //
@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class ActiveChatSessionsViewController: StackedContainersViewController {
-    override func awakeFromNib() {
+    override func viewDidLoad() {
         self.dataSource = ChatSessionsManager.shared
     }
 }
@@ -60,9 +60,7 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
 
     override func becomeForeground() {
         self.isForeground = true
-        if self.session.unread > 0 {
-            self.scrollToBottom()
-        }
+        self.scrollToBottom(animated: true)
 
         ChatSessionsManager.shared.markAsRead(session: self.session)
         self.backButton.isHidden = false
@@ -90,7 +88,7 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
             ChatSessionsManager.shared.markAsRead(session: self.session)
             OperationQueue.main.addOperation {
                 if self.shouldScrollToBottom() {
-                    self.scrollToBottom()
+                    self.scrollToBottom(animated: true)
                 }
             }
         }
@@ -116,19 +114,30 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
         self.newMessagesLabel.isHidden = self.session.unread == 0
     }
 
-    func scrollToBottom() {
+    func scrollToBottom(animated: Bool) {
         if !self.messages.isEmpty {
-            self.tableView.scrollToRow(at: IndexPath(row: self.messages.count - 1, section: 0), at: .bottom, animated: true)
+            self.tableView.scrollToRow(at: IndexPath(row: self.messages.count - 1, section: 0), at: .bottom, animated: animated)
         }
     }
 
     func shouldScrollToBottom() -> Bool {
-        return true
+        return self.tableView.contentOffset.y + self.tableView.frame.height > self.tableView.contentSize.height - 50.0
     }
 
     func appendMessages(_ messages: [SteamChatMessage]) {
         for msg in messages {
             self.messages.append(ParsedMessage(attributed: MessageParser.shared.parseMessage(msg.message), msg: msg))
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        for path in self.tableView.indexPathsForVisibleRows ?? [] {
+            let cell = self.tableView.cellForRow(at: path)!
+            let message = self.messages[path.row]
+            let textView = cell.viewWithTag(1) as! ChatTextView
+            let size = ChatTextView.textBounds(text: message.attributed, width: self.view.frame.width / 2)
+            textView.setFrameTo(size, parent: self.view.frame)
         }
     }
 

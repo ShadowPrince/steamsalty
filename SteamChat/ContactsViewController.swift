@@ -39,12 +39,12 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var selfAvatarImageView: AvatarImageView!
     @IBOutlet weak var selfNameLabel: UILabel!
-    @IBOutlet weak var selfStateLabel: UILabel!
+    @IBOutlet weak var selfStateLabel: PersonaStateLabel!
 
     var items = [Item]()
     let pollQueue = OperationQueue()
 
-    override func awakeFromNib() {
+    override func viewDidLoad() {
         ChatSessionsManager.shared.delegates[-1] = self
         SteamPollManager.shared.delegates.append(self)
     }
@@ -81,13 +81,22 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         OperationQueue.main.addOperation {
             self.selfAvatarImageView.loadImage(at: user.avatar)
             self.selfNameLabel.text = user.name
-            self.selfStateLabel.text = "---"
+            self.selfStateLabel.setToState(user.state)
             self.tableView.reloadData()
         }
     }
 
     func pollError(_ error: Error, manager: SteamPollManager) {
-
+        switch error {
+        case SteamApi.RequestError.AuthFailed:
+            break
+        default:
+            OperationQueue.main.addOperation {
+                let alert = UIAlertController(title: "Error:", message: String(describing: error), preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: { _ in alert.dismiss(animated: true, completion: nil) }))
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
     }
 
     // chat sessions

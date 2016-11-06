@@ -60,6 +60,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F30C32ED1DCD2EF1003E02E9 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				F3C5020B1DB4C20200AD4F3F /* ViewController.swift */,
+				F3DFCC791DC67CE3002F6039 /* ContactsViewController.swift */,
+				F325685C1DBFD9870096A2CD /* ChatViewController.swift */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		F30C32EE1DCD2EFE003E02E9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F30029261DC676BC00C103D3 /* StackedControllersViewController.swift */,
+				F3DFCC7D1DC8D6D7002F6039 /* ChatViews.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		F352354F1DBF5F73006A8BA3 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
@@ -92,11 +111,9 @@
 			children = (
 				F3DFCC771DC67C26002F6039 /* SteamAPI */,
 				F3DFCC781DC67C2D002F6039 /* Lib */,
+				F30C32EE1DCD2EFE003E02E9 /* Views */,
+				F30C32ED1DCD2EF1003E02E9 /* ViewControllers */,
 				F3C502091DB4C20200AD4F3F /* AppDelegate.swift */,
-				F3C5020B1DB4C20200AD4F3F /* ViewController.swift */,
-				F3DFCC791DC67CE3002F6039 /* ContactsViewController.swift */,
-				F3DFCC7B1DC67D2A002F6039 /* ChatSessionsManager.swift */,
-				F325685C1DBFD9870096A2CD /* ChatViewController.swift */,
 				F3C5020D1DB4C20200AD4F3F /* Main.storyboard */,
 				F352354F1DBF5F73006A8BA3 /* Assets */,
 			);
@@ -126,8 +143,7 @@
 		F3DFCC781DC67C2D002F6039 /* Lib */ = {
 			isa = PBXGroup;
 			children = (
-				F30029261DC676BC00C103D3 /* StackedControllersViewController.swift */,
-				F3DFCC7D1DC8D6D7002F6039 /* ChatViews.swift */,
+				F3DFCC7B1DC67D2A002F6039 /* ChatSessionsManager.swift */,
 				F3F882B31DC65B4900F50BC3 /* Helpers.swift */,
 			);
 			name = Lib;
@@ -364,6 +380,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = SteamChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.shdwprince.SteamChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -381,6 +398,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = SteamChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.shdwprince.SteamChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";

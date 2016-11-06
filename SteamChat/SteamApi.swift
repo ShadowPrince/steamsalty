@@ -16,6 +16,7 @@ protocol SteamApiMethod {
 class SteamApi {
     enum RequestError: Error {
         case Error(String)
+        case AuthFailed
         case PollError(String)
         case PollTimeout
     }
@@ -57,46 +58,50 @@ class SteamApi {
     
     static var shared: SteamApi!
     static func sharedInit() throws {
-        var web: String?, host: String?, key: String?, umqid: String?
-
-        let request = URLRequest(url: URL(string: "https://steamcommunity.com/chat")!)
-        if let data = try? NSURLConnection.sendSynchronousRequest(request, returning: nil), let html = String(data: data, encoding: .utf8) {
-            if let sessionId = NSRegularExpression.matches(in: html, of: "g_sessionID = \"(\\S+)\"", options: []).first?.first,
-               let apiMatch = NSRegularExpression.matches(in: html, of: "new CWebAPI\\(\\s*\\S+,\\s*'(\\S+)',\\s*\"(\\S+)\"", options: []).first {
-                web = sessionId
-                host = apiMatch[0]
-                key = apiMatch[1]
-            }
-        }
-
-        if let host = host, let key = key {
-            let url = "\(host)ISteamWebUserPresenceOAuth/Logon/v0001/?jsonp=jQuery111105162750359218159_1477598446476&ui_mode=web&access_token=\(key)&_=1477598446477"
-            let request = URLRequest(url: URL(string: url)!)
-            if let data = try? NSURLConnection.sendSynchronousRequest(request, returning: nil),
-               let javascript = String(data: data, encoding: .utf8),
-               let match = NSRegularExpression.matches(in: javascript, of: "(\\{.*\\})", options: [.dotMatchesLineSeparators, .anchorsMatchLines]).first {
-                let jsonObject = try JSONSerialization.jsonObject(with: match[0], options: [])
-                let dict = jsonObject as! Dictionary<String, Any>
-                let errorString = dict["error"] as! String
-                switch errorString {
-                case "OK":
-                    umqid = dict["umqid"] as? String
-                default:
-                    break
+        do {
+            var web: String?, host: String?, key: String?, umqid: String?
+            
+            let request = URLRequest(url: URL(string: "https://steamcommunity.com/chat")!)
+            if let data = try? NSURLConnection.sendSynchronousRequest(request, returning: nil), let html = String(data: data, encoding: .utf8) {
+                if let sessionId = NSRegularExpression.matches(in: html, of: "g_sessionID = \"(\\S+)\"", options: []).first?.first,
+                    let apiMatch = NSRegularExpression.matches(in: html, of: "new CWebAPI\\(\\s*\\S+,\\s*'(\\S+)',\\s*\"(\\S+)\"", options: []).first {
+                    web = sessionId
+                    host = apiMatch[0]
+                    key = apiMatch[1]
                 }
             }
+            
+            if let host = host, let key = key {
+                let url = "\(host)ISteamWebUserPresenceOAuth/Logon/v0001/?jsonp=jQuery111105162750359218159_1477598446476&ui_mode=web&access_token=\(key)&_=1477598446477"
+                let request = URLRequest(url: URL(string: url)!)
+                if let data = try? NSURLConnection.sendSynchronousRequest(request, returning: nil),
+                    let javascript = String(data: data, encoding: .utf8),
+                    let match = NSRegularExpression.matches(in: javascript, of: "(\\{.*\\})", options: [.dotMatchesLineSeparators, .anchorsMatchLines]).first {
+                    let jsonObject = try JSONSerialization.jsonObject(with: match[0], options: [])
+                    let dict = jsonObject as! Dictionary<String, Any>
+                    let errorString = dict["error"] as! String
+                    switch errorString {
+                    case "OK":
+                        umqid = dict["umqid"] as? String
+                    default:
+                        break
+                    }
+                }
                 
-            if let web = web, let umqid = umqid {
-                shared = SteamApi(
-                    web: WebApi(web),
-                    internal: InternalApi(host, key: key, id: umqid)
-                )
-
-                return
+                if let web = web, let umqid = umqid {
+                    shared = SteamApi(
+                        web: WebApi(web),
+                        internal: InternalApi(host, key: key, id: umqid)
+                    )
+                    
+                    return
+                }
             }
+            
+            throw RequestError.AuthFailed
+        } catch {
+            throw RequestError.AuthFailed
         }
-        
-        throw RequestError.Error("Failed to obtain auth data")
     }
 
     let queue = DispatchQueue(label: "net.shdwprince.SteamApiWorker")
@@ -108,29 +113,33 @@ class SteamApi {
         self.api = api
     }
 
-    func status(handler: @escaping (SteamUser?, [SteamUser]?, Error?) -> ()) {
+    func status(handler: @escaping (SteamUser?, [SteamUser]?, [SteamEmoteName]?, Error?) -> ()) {
         Alamofire.request("https://steamcommunity.com/chat").responseString (queue: self.queue, encoding: .utf8) { (response) in
             var error: Error = RequestError.Error("Request failed")
-
+            
             if let html = response.result.value,
-               let match = NSRegularExpression.matches(in: html, of: " WebAPI, (\\{.*?\\}), (\\[.*?\\])", options: []).first {
-               let selfJson = match[0]
-               let usersJson = match[1]
+               let statusMatch = NSRegularExpression.matches(in: html, of: " WebAPI, (\\{.*?\\}), (\\[.*?\\])", options: []).first,
+               let emotesMatch = NSRegularExpression.matches(in: html, of: "SetOwnedEmoticons\\( (.*?) \\);", options: []).first {
+                let selfJson = statusMatch[0]
+                let usersJson = statusMatch[1]
+                let emotesJson = emotesMatch[0]
                 do {
                     let selfObject = try JSONSerialization.jsonObject(with: selfJson, options: [])
                     let friendsObject = try JSONSerialization.jsonObject(with: usersJson, options: [])
-                    
+                    let emotesObject = try JSONSerialization.jsonObject(with: emotesJson, options: [])
+
                     let selfUser = try SteamUser.decode(selfObject)
                     let friendsArray = try [SteamUser].decode(friendsObject)
-                    
-                    handler(selfUser, friendsArray, nil)
+                    let emotesArray = try [SteamEmoteName].decode(emotesObject)
+
+                    handler(selfUser, friendsArray, emotesArray, nil)
                     return
                 } catch let e {
                     error = e
                 }
             }
             
-            handler(nil, nil, error);
+            handler(nil, nil, nil, error);
         }
     }
 

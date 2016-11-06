@@ -43,7 +43,12 @@ class StackedContainersViewController: UIViewController {
     private var dragLocation: CGPoint?
     private var dragDirection: DragDirection?
 
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.viewDidLayoutSubviews()
+        self.foregroundViewToDefaultPosition()
+        self.backgroundViewToDefaultPosition()
+        
         if self.dataSource.stackCount > 0 {
             self.foregroundController.setIndex(self.dataSource.stackIndex)
             self.foregroundController.becomeForeground()
@@ -53,15 +58,14 @@ class StackedContainersViewController: UIViewController {
             self.backgroundController.setIndex(self.dataSource.stackNextIndex)
             self.backgroundController.becomeBackground()
         }
-
-        self.viewDidLayoutSubviews()
-        self.foregroundViewToDefaultPosition()
-        self.backgroundViewToDefaultPosition()
     }
-
+    
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         self.topOffset = self.prefersStatusBarHidden ? 0.0 : 20.0
         self.topOffset += self.navigationController?.isNavigationBarHidden ?? false == false ? 48.0 : 0.0
+        self.foregroundViewToDefaultPosition()
+        self.backgroundViewToDefaultPosition()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -152,12 +156,8 @@ class StackedContainersViewController: UIViewController {
                         self.backgroundView.frame = CGRect(x: 0, y: -backgroundOffset, width: self.view.frame.width, height: self.view.frame.height - backgroundOffset)
                     }
 
-                    UIView.animate(withDuration: frontShiftDuration) {
-                        self.foregroundViewToDefaultPosition()
-                    }
-                    UIView.animate(withDuration: frontShiftDuration) {
-                        self.backgroundViewToDefaultPosition()
-                    }
+                    UIView.animate(withDuration: frontShiftDuration, animations: { self.foregroundViewToDefaultPosition() } , completion: { _ in self.foregroundController.becomeForeground() })
+                    UIView.animate(withDuration: frontShiftDuration, animations: { self.backgroundViewToDefaultPosition() } , completion: { _ in self.backgroundController.becomeBackground() })
             })
         default: UIView.animate(withDuration: resetDuration) {
             self.backgroundViewToDefaultPosition()
@@ -178,10 +178,6 @@ class StackedContainersViewController: UIViewController {
     }
     
     private func pushStack() {
-        defer {
-            self.foregroundController.becomeForeground()
-            self.backgroundController.becomeBackground()
-        }
 
         guard self.dataSource.stackCount > 0 else {
             return
