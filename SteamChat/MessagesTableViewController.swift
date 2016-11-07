@@ -15,10 +15,10 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
         var msg: SteamChatMessage!
     }
 
-    var tableView: UITableView!
+    @IBOutlet weak var tableView: UITableView!
     var messages = [ParsedMessage]()
     var session: ChatSessionsManager.Session!
-    
+
     func scrollToBottom(animated: Bool) {
         if !self.messages.isEmpty {
             self.tableView.scrollToRow(at: IndexPath(row: self.messages.count - 1, section: 0), at: .bottom, animated: animated)
@@ -29,10 +29,42 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
         return self.tableView.contentOffset.y + self.tableView.frame.height > self.tableView.contentSize.height - 50.0
     }
 
+    func scrollToBottomIfShould() {
+        if self.shouldScrollToBottom() {
+            self.scrollToBottom(animated: true)
+        }
+    }
+
     func appendMessages(_ messages: [SteamChatMessage]) {
         for msg in messages {
             self.messages.append(ParsedMessage(attributed: MessageParser.shared.parseMessage(msg.message), msg: msg))
         }
+    }
+
+    func insertMessages(_ messages: [SteamChatMessage]) {
+        let paths = messages.enumerated().map { (offset: Int, element: SteamChatMessage) -> IndexPath in
+            return IndexPath(row: self.messages.count + offset, section: 0)
+        }
+
+        self.appendMessages(messages)
+        self.tableView.insertRows(at: paths, with: .automatic)
+        self.scrollToBottom(animated: true)
+    }
+
+    func empty() {
+        self.messages.removeAll()
+    }
+
+    func reload() {
+        self.tableView.reloadData()
+    }
+    
+    @IBAction func tapAction(_ sender: AnyObject) {
+        self.targetPerform(ChatViewController.hideKeyboardActionSelector, sender: sender)
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.targetPerform(ChatViewController.hideKeyboardActionSelector, sender: scrollView)
     }
 
     override func viewDidLayoutSubviews() {
@@ -41,8 +73,8 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
             let cell = self.tableView.cellForRow(at: path)!
             let message = self.messages[path.row]
             let textView = cell.viewWithTag(1) as! ChatTextView
-            let size = ChatTextView.textBounds(text: message.attributed, width: self.view.frame.width / 2)
-            textView.setFrameTo(size, parent: self.view.frame)
+            let size = ChatTextView.textBounds(text: message.attributed, width: self.parent!.view.frame.width / 2)
+            textView.setFrameTo(size, parent: self.parent!.view.frame)
         }
     }
 
@@ -51,7 +83,7 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let width = (self.view.frame.width / 2)
+        let width = (self.parent!.view.frame.width / 2)
         return ChatTextView.textBounds(text: self.messages[indexPath.row].attributed, width: width).height + ChatTextView.offset * 2
     }
 
@@ -61,8 +93,8 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
         let textView = cell.viewWithTag(1) as! ChatTextView
         textView.attributedText = message.attributed
 
-        let size = ChatTextView.textBounds(text: message.attributed, width: self.view.frame.width / 2)
-        textView.setFrameTo(size, parent: self.view.frame)
+        let size = ChatTextView.textBounds(text: message.attributed, width: self.parent!.view.frame.width / 2)
+        textView.setFrameTo(size, parent: self.parent!.view.frame)
 
         return cell
     }

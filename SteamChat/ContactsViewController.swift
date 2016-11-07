@@ -92,9 +92,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             break
         default:
             OperationQueue.main.addOperation {
-                let alert = UIAlertController(title: "Error:", message: String(describing: error), preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: { _ in alert.dismiss(animated: true, completion: nil) }))
-                self.present(alert, animated: true, completion: nil)
+                self.presentError(error)
             }
         }
     }

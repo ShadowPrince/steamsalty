@@ -50,33 +50,55 @@ extension UIColor {
     
 }
 
+extension UIViewController {
+    func presentError(_ error: Any) {
+        let alert = UIAlertController(title: "Error:", message: String(describing: error), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: { _ in alert.dismiss(animated: true, completion: nil) }))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    func targetPerform(_ sel: Selector, sender: AnyObject) {
+        if let target = self.target(forAction: sel, withSender: sender) as? UIResponder {
+            target.perform(sel, with: sender)
+        }
+    }
+}
+
 class MessageParser {
     static let shared = MessageParser()
 
     var cache = [String: Any]()
     
-    func emoteUrl(_ named: String) -> URL {
+    func emoteUrl(_ named: SteamEmoteName) -> URL {
         return URL(string: "https://steamcommunity-a.akamaihd.net/economy/emoticon/\(named)")!
     }
 
-    func parseMessage(_ msg: String) -> NSAttributedString {
-        var attributed = NSMutableAttributedString(string: msg)
+    func loadEmote(named emoteName: SteamEmoteName) -> UIImage? {
+        if self.cache[emoteName] == nil {
+            do {
+                let data = try NSURLConnection.sendSynchronousRequest(URLRequest(url: self.emoteUrl(emoteName)), returning: nil)
+                self.cache[emoteName] = UIImage(data: data)
+            } catch let e {
+                print(e)
+                self.cache[emoteName] = e
+            }
+        }
         
-        for emoteArray in NSRegularExpression.matches(in: msg, of: "(\\ː\\w+?\\ː)", options: []) {
+        return self.cache[emoteName] as? UIImage
+    }
+
+    func cachedEmote(named: SteamEmoteName) -> UIImage? {
+        return self.cache[named] as? UIImage
+    }
+
+    func parseMessage(_ msg: String) -> NSAttributedString {
+        let attributed = NSMutableAttributedString(string: msg)
+        
+        for emoteArray in NSRegularExpression.matches(in: msg, of: "([ː:]\\w+?[ː:])", options: []) {
             let emoteCode = emoteArray[0]
 
             let emoteName = emoteCode.substring(with: emoteCode.index(emoteCode.startIndex, offsetBy: 1)..<emoteCode.index(emoteCode.endIndex, offsetBy: -1))
-            if self.cache[emoteName] == nil {
-                do {
-                    let data = try Data.init(contentsOf: self.emoteUrl(emoteName))
-                    self.cache[emoteName] = UIImage(data: data)
-                } catch let e {
-                    print(e)
-                    self.cache[emoteName] = e
-                }
-            }
-
-            if let image = self.cache[emoteName] as? UIImage {
+            if let image = self.loadEmote(named: emoteName) {
                 let attachment = NSTextAttachment()
                 attachment.image = image
                 let imageString = NSAttributedString(attachment: attachment)

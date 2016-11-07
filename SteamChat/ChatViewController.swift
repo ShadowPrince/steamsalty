@@ -15,54 +15,80 @@ class ActiveChatSessionsViewController: StackedContainersViewController {
     }
 }
 
-class ChatViewController: StackedContainerViewController, UITableViewDataSource, UITableViewDelegate, ChatSessionsManagerDelegate, UITextViewDelegate {
+class ChatViewController: StackedContainerViewController, ChatSessionsManagerDelegate, UITextViewDelegate {
     struct ParsedMessage {
         var attributed: NSAttributedString!
         var msg: SteamChatMessage!
     }
+
+    static let hideKeyboardActionSelector = #selector(hideKeyboardAction(_:))
     
-    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var newMessagesLabel: NewMessagesLabel!
     @IBOutlet weak var avatarImageView: AvatarImageView!
     @IBOutlet weak var personaStateLabel: PersonaStateLabel!
+    @IBOutlet weak var sayTextView: UITextView!
+
     @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var emojisHeightConstraint: NSLayoutConstraint!
 
+    private var messagesViewController: MessagesTableViewController!
+    private var emotesViewController: EmotesViewController!
+    private let placeholderMessage = "Enter message..."
+    private var scrollToBottom = false
+
     private var isForeground: Bool = false
     private var index: Int?
-    private var messages = [ParsedMessage]()
     private var session: ChatSessionsManager.Session!
-    private var scrollToBottom = false
-    
-    private var textBounds = [Int: CGRect]()
 
     override func viewDidLoad() {
-        self.newMessagesLabel.isHidden = true
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
 
+        self.newMessagesLabel.isHidden = true
         self.emojisHeightConstraint.constant = 0.0
+        self.emotesViewController.action = { self.sayTextView.text.append(" \($0) ") }
+        self.textViewDidEndEditing(self.sayTextView)
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case "emotesViewController"?:
+            self.emotesViewController = segue.destination as! EmotesViewController
+        case "messagesViewController"?:
+            self.messagesViewController = segue.destination as! MessagesTableViewController
+        default: break
+        }
+
+        super.prepare(for: segue, sender: sender)
+    }
+
+    @IBAction func backAction(_ sender: AnyObject) {
+        self.navigationController?.popViewController(animated: true)
+    }
+
+    @IBAction func hideKeyboardAction(_ sender: AnyObject) {
+        self.view.endEditing(true)
+    }
+
     func keyboardWillShow(notification: NSNotification) {
         let endFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
-
+        
         self.bottomConstraint.constant = endFrame?.height ?? 0.0
-        if self.shouldScrollToBottom() {
+        if self.messagesViewController.shouldScrollToBottom() {
             self.scrollToBottom = true
         }
     }
 
     func keyboardDidShow(notification: NSNotification) {
         if self.scrollToBottom {
-            self.scrollToBottom(animated: true)
+            self.messagesViewController.scrollToBottom(animated: true)
             self.scrollToBottom = false
         }
     }
@@ -76,42 +102,59 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
             let fullText = textView.text!
             let text = fullText.substring(to: fullText.index(fullText.endIndex, offsetBy: -1))
             
-            SteamApi.shared.chatSay(text, to: self.session.user.id, handler: { (e) in
+            SteamApi.shared.chatSay(text, to: self.session.user.cid, handler: { (e) in
                 if e == nil {
                     OperationQueue.main.addOperation {
                         textView.text = ""
 
                         let message = SteamChatMessage(author: ChatSessionsManager.shared.user.id, message: text, timestamp: UInt64(Date().timeIntervalSince1970))
                         self.session.messages.append(message)
-                        self.appendMessages([message])
-                        self.tableView.insertRows(at: [IndexPath(row: self.messages.count - 1, section: 0)], with: .automatic)
-                        self.scrollToBottom(animated: true)
+                        self.messagesViewController.insertMessages([message])
                     }
                 } else {
                     OperationQueue.main.addOperation {
-                        // show error
+                        self.presentError(e!)
                     }
                 }
             })
         }
     }
 
-    @IBAction func emojisTapAction(_ sender: AnyObject) {
-        self.emojisHeightConstraint.constant = self.emojisHeightConstraint.constant == 0.0 ? 100.0 : 0.0
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.text == self.placeholderMessage {
+            textView.text = ""
+            textView.textColor = UIColor.white
+        }
     }
-    
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text == "" {
+            textView.text = self.placeholderMessage
+            textView.textColor = UIColor.gray
+        }
+    }
+
+    @IBAction func emojisTapAction(_ sender: AnyObject) {
+        UIView.animate(withDuration: 0.2) {
+            self.emojisHeightConstraint.constant = self.emojisHeightConstraint.constant == 0.0 ? 60.0 : 0.0
+            self.view.layoutSubviews()
+        }
+    }
+
     override func setIndex(_ index: Int) {
         if let lastIndex = self.index {
             ChatSessionsManager.shared.delegates.removeValue(forKey: lastIndex)
         }
 
         self.index = index
-        self.session = ChatSessionsManager.shared.sessions[index]
-        self.messages.removeAll()
-        self.appendMessages(session.messages)
-        self.personaStateLabel.setToState(session.user.state)
 
-        self.tableView.reloadData()
+        self.session = ChatSessionsManager.shared.sessions[index]
+        self.messagesViewController.session = self.session
+        self.messagesViewController.empty()
+        self.messagesViewController.appendMessages(self.session.messages)
+        self.messagesViewController.reload()
+
+        self.personaStateLabel.setToState(session.user.state)
         self.titleLabel.text = "\(self.session.user.name)"
         self.avatarImageView.loadImage(at: self.session.user.avatar)
 
@@ -120,7 +163,7 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
 
     override func becomeForeground() {
         self.isForeground = true
-        self.scrollToBottom(animated: true)
+        self.messagesViewController.scrollToBottom(animated: true)
 
         ChatSessionsManager.shared.markAsRead(session: self.session)
         self.backButton.isHidden = false
@@ -134,22 +177,12 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
     }
 
     func sessionReceivedMessages(_ messages: [SteamChatMessage], in session: ChatSessionsManager.Session, from: ChatSessionsManager) {
-        let lastIndex = self.messages.count
-        self.appendMessages(messages)
-
-        var indexes = [IndexPath]()
-        for i in lastIndex..<self.messages.count {
-            indexes.append(IndexPath.init(row: i, section: 0))
-        }
-
-        self.tableView.insertRows(at: indexes, with: .automatic)
+        self.messagesViewController.insertMessages(messages)
 
         if self.isForeground {
             ChatSessionsManager.shared.markAsRead(session: self.session)
             OperationQueue.main.addOperation {
-                if self.shouldScrollToBottom() {
-                    self.scrollToBottom(animated: true)
-                }
+                self.messagesViewController.scrollToBottomIfShould()
             }
         }
     }
@@ -172,57 +205,5 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
     func updateUnreadCounter() {
         self.newMessagesLabel.text = "\(self.session.unread)"
         self.newMessagesLabel.isHidden = self.session.unread == 0
-    }
-
-    func scrollToBottom(animated: Bool) {
-        if !self.messages.isEmpty {
-            self.tableView.scrollToRow(at: IndexPath(row: self.messages.count - 1, section: 0), at: .bottom, animated: animated)
-        }
-    }
-
-    func shouldScrollToBottom() -> Bool {
-        return self.tableView.contentOffset.y + self.tableView.frame.height > self.tableView.contentSize.height - 50.0
-    }
-
-    func appendMessages(_ messages: [SteamChatMessage]) {
-        for msg in messages {
-            self.messages.append(ParsedMessage(attributed: MessageParser.shared.parseMessage(msg.message), msg: msg))
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        for path in self.tableView.indexPathsForVisibleRows ?? [] {
-            let cell = self.tableView.cellForRow(at: path)!
-            let message = self.messages[path.row]
-            let textView = cell.viewWithTag(1) as! ChatTextView
-            let size = ChatTextView.textBounds(text: message.attributed, width: self.view.frame.width / 2)
-            textView.setFrameTo(size, parent: self.view.frame)
-        }
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.messages.count
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let width = (self.view.frame.width / 2)
-        return ChatTextView.textBounds(text: self.messages[indexPath.row].attributed, width: width).height + ChatTextView.offset * 2
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = self.messages[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: message.msg.author == self.session.user.id ? "ingoingCell" : "outgoingCell")!
-        let textView = cell.viewWithTag(1) as! ChatTextView
-        textView.attributedText = message.attributed
-
-        let size = ChatTextView.textBounds(text: message.attributed, width: self.view.frame.width / 2)
-        textView.setFrameTo(size, parent: self.view.frame)
-
-        return cell
-    }
-
-    @IBAction func backAction(_ sender: AnyObject) {
-        self.navigationController?.popViewController(animated: true)
     }
 }

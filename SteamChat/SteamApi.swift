@@ -190,7 +190,7 @@ class SteamApi {
         }
     }
 
-    func chatSay(_ text: String, to user: SteamUserId, handler: @escaping (Error?) -> ()) {
+    func chatSay(_ text: String, to user: SteamCommunityId, handler: @escaping (Error?) -> ()) {
         self.api
             .request("ISteamWebUserPresenceOAuth/Message/v0001/",
                      parameters: ["type": "saytext",

@@ -39,11 +39,11 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
     static let shared = ChatSessionsManager()
 
     let queue = OperationQueue()
-
     var delegates = [Int: ChatSessionsManagerDelegate]()
     var sessions = [Session]()
 
     var contacts = [SteamUser]()
+    var emotes = [SteamEmoteName]()
     var user: SteamUser!
 
     private var index = 0
@@ -112,6 +112,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
     func pollStatus(_ user: SteamUser, contacts: [SteamUser], emotes: [String]) {
         self.user = user
         self.contacts = contacts
+        self.emotes = emotes
     }
 
     func pollError(_ error: Error, manager: SteamPollManager) {
@@ -120,14 +121,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
 
     // helpers
     func openChat(with user: SteamUser) {
-        var existingSession: ChatSessionsManager.Session?
-        for session in self.sessions {
-            if session.user == user {
-                existingSession = session
-            }
-        }
-
-        if let existingSession = existingSession {
+        if let existingSession = self.sessions[user] {
             self.index = self.sessions.index(of: existingSession)!
         } else {
             let session = ChatSessionsManager.Session(user: user)
