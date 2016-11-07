@@ -15,7 +15,7 @@ class ActiveChatSessionsViewController: StackedContainersViewController {
     }
 }
 
-class ChatViewController: StackedContainerViewController, UITableViewDataSource, UITableViewDelegate, ChatSessionsManagerDelegate {
+class ChatViewController: StackedContainerViewController, UITableViewDataSource, UITableViewDelegate, ChatSessionsManagerDelegate, UITextViewDelegate {
     struct ParsedMessage {
         var attributed: NSAttributedString!
         var msg: SteamChatMessage!
@@ -28,16 +28,76 @@ class ChatViewController: StackedContainerViewController, UITableViewDataSource,
     @IBOutlet weak var avatarImageView: AvatarImageView!
     @IBOutlet weak var personaStateLabel: PersonaStateLabel!
     @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var emojisHeightConstraint: NSLayoutConstraint!
 
     private var isForeground: Bool = false
     private var index: Int?
     private var messages = [ParsedMessage]()
     private var session: ChatSessionsManager.Session!
+    private var scrollToBottom = false
     
     private var textBounds = [Int: CGRect]()
 
     override func viewDidLoad() {
         self.newMessagesLabel.isHidden = true
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+
+        self.emojisHeightConstraint.constant = 0.0
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    func keyboardWillShow(notification: NSNotification) {
+        let endFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+
+        self.bottomConstraint.constant = endFrame?.height ?? 0.0
+        if self.shouldScrollToBottom() {
+            self.scrollToBottom = true
+        }
+    }
+
+    func keyboardDidShow(notification: NSNotification) {
+        if self.scrollToBottom {
+            self.scrollToBottom(animated: true)
+            self.scrollToBottom = false
+        }
+    }
+
+    func keyboardWillHide(notification: NSNotification) {
+        self.bottomConstraint.constant = 0.0
+    }
+
+    func textViewDidChange(_ textView: UITextView) {
+        if textView.text.characters.last == "\n" {
+            let fullText = textView.text!
+            let text = fullText.substring(to: fullText.index(fullText.endIndex, offsetBy: -1))
+            
+            SteamApi.shared.chatSay(text, to: self.session.user.id, handler: { (e) in
+                if e == nil {
+                    OperationQueue.main.addOperation {
+                        textView.text = ""
+
+                        let message = SteamChatMessage(author: ChatSessionsManager.shared.user.id, message: text, timestamp: UInt64(Date().timeIntervalSince1970))
+                        self.session.messages.append(message)
+                        self.appendMessages([message])
+                        self.tableView.insertRows(at: [IndexPath(row: self.messages.count - 1, section: 0)], with: .automatic)
+                        self.scrollToBottom(animated: true)
+                    }
+                } else {
+                    OperationQueue.main.addOperation {
+                        // show error
+                    }
+                }
+            })
+        }
+    }
+
+    @IBAction func emojisTapAction(_ sender: AnyObject) {
+        self.emojisHeightConstraint.constant = self.emojisHeightConstraint.constant == 0.0 ? 100.0 : 0.0
     }
     
     override func setIndex(_ index: Int) {

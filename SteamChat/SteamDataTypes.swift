@@ -90,7 +90,17 @@ class SteamChatMessageEvent: SteamEvent {
 struct SteamChatMessage {
     let author: SteamUserId
     let message: String
-    let timestamp: UInt64
+    var timestamp: UInt64
+
+    var date: Date {
+        get {
+            return Date.init(timeIntervalSince1970: TimeInterval(self.timestamp))
+        }
+
+        set {
+            self.timestamp = UInt64(newValue.timeIntervalSince1970)
+        }
+    }
 }
 
 extension SteamChatMessage: Decodable {

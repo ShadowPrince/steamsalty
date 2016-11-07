@@ -52,10 +52,25 @@ class SteamApi {
             parameters["umqid"] = self.id
             parameters["pollid"] = self.requestNumber
             parameters["message"] = self.messageNumber
+            parameters["jsonp"] = ""
+            parameters["sectimeout"] = 35
+            parameters["secidletime"] = 20
+            parameters["_"] = UInt64(Date().timeIntervalSince1970)
+
             return Alamofire.request(self.host.appending(tail), parameters: parameters)
         }
+
+        func parse(response: DataResponse<String>) throws -> Dictionary<String, Any> {
+            if let javascript = response.result.value,
+                let match = NSRegularExpression.matches(in: javascript, of: "(\\{.*\\})", options: [.dotMatchesLineSeparators, .anchorsMatchLines]).first {
+                let jsonObject = try JSONSerialization.jsonObject(with: match[0], options: [])
+                return jsonObject as! Dictionary<String, Any>
+            } else {
+                throw RequestError.Error(response.result.value ?? "Request failed")
+            }
+        }
     }
-    
+
     static var shared: SteamApi!
     static func sharedInit() throws {
         do {
@@ -116,7 +131,7 @@ class SteamApi {
     func status(handler: @escaping (SteamUser?, [SteamUser]?, [SteamEmoteName]?, Error?) -> ()) {
         Alamofire.request("https://steamcommunity.com/chat").responseString (queue: self.queue, encoding: .utf8) { (response) in
             var error: Error = RequestError.Error("Request failed")
-            
+
             if let html = response.result.value,
                let statusMatch = NSRegularExpression.matches(in: html, of: " WebAPI, (\\{.*?\\}), (\\[.*?\\])", options: []).first,
                let emotesMatch = NSRegularExpression.matches(in: html, of: "SetOwnedEmoticons\\( (.*?) \\);", options: []).first {
@@ -144,38 +159,24 @@ class SteamApi {
     }
 
     func poll(handler: @escaping (SteamPollResponse?, Error?) -> ()) {
-        let parameters: [String: Any] = ["jsonp": "",
-                                          "sectimeout": 35,
-                                          "secidletime": 20,
-                                          "use_accountids": 1,
-                                          "_": UInt64(Date().timeIntervalSince1970), ]
+        self.api.request("ISteamWebUserPresenceOAuth/Poll/v0001/", parameters: ["use_accountids": 1, ]).responseString (queue: self.queue, encoding: .utf8) { response in
+            do {
+                let dict = try self.api.parse(response: response)
+                let errorString = dict["error"] as! String
 
-        self.api.request("ISteamWebUserPresenceOAuth/Poll/v0001/", parameters: parameters).responseString (queue: self.queue, encoding: .utf8) { response in
-            var error: Error = RequestError.Error("Request failed")
-
-            if let javascript = response.result.value,
-               let match = NSRegularExpression.matches(in: javascript, of: "(\\{.*\\})", options: [.dotMatchesLineSeparators, .anchorsMatchLines]).first {
-                do {
-                    let jsonObject = try JSONSerialization.jsonObject(with: match[0], options: [])
-                    let dict = jsonObject as! Dictionary<String, Any>
-                    let errorString = dict["error"] as! String
-
-                    switch errorString {
-                    case "OK":
-                        self.api.messageNumber += 1
-                        handler(try SteamPollResponse.decode(jsonObject), nil)
-                        return
-                    case "Timeout":
-                        error = RequestError.PollTimeout
-                    default:
-                        error = RequestError.PollError(errorString)
-                    }
-                } catch let e {
-                    error = e
+                switch errorString {
+                case "OK":
+                    self.api.messageNumber += 1
+                    handler(try SteamPollResponse.decode(dict), nil)
+                    return
+                case "Timeout":
+                    throw RequestError.PollTimeout
+                default:
+                    throw RequestError.PollError(errorString)
                 }
+            } catch let e {
+                handler(nil, e)
             }
-
-            handler(nil, error)
         }
     }
 
@@ -186,6 +187,30 @@ class SteamApi {
             } catch let e {
                 handler(nil, e)
             }
+        }
+    }
+
+    func chatSay(_ text: String, to user: SteamUserId, handler: @escaping (Error?) -> ()) {
+        self.api
+            .request("ISteamWebUserPresenceOAuth/Message/v0001/",
+                     parameters: ["type": "saytext",
+                                  "steamid_dst": user,
+                                  "text": text, ])
+            .responseString { response in
+                do {
+                    let dict = try self.api.parse(response: response)
+                    let errorString = dict["error"] as! String
+                    switch errorString {
+                        case "OK":
+                        self.api.messageNumber += 1
+                        handler(nil)
+                        return
+                    default:
+                        throw RequestError.Error(errorString)
+                    }
+                } catch let e {
+                    handler(e)
+                }
         }
     }
 }

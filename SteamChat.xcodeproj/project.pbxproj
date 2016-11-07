@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F30029271DC676BC00C103D3 /* StackedControllersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30029261DC676BC00C103D3 /* StackedControllersViewController.swift */; };
+		F30C32F01DD0B437003E02E9 /* MessagesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30C32EF1DD0B437003E02E9 /* MessagesTableViewController.swift */; };
 		F325685D1DBFD9870096A2CD /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F325685C1DBFD9870096A2CD /* ChatViewController.swift */; };
 		F35235511DBF60F2006A8BA3 /* SteamApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35235501DBF60F2006A8BA3 /* SteamApi.swift */; };
 		F35235551DBF6205006A8BA3 /* Decodable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F35235541DBF6205006A8BA3 /* Decodable.framework */; };
@@ -27,6 +28,7 @@
 
 /* Begin PBXFileReference section */
 		F30029261DC676BC00C103D3 /* StackedControllersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackedControllersViewController.swift; sourceTree = "<group>"; };
+		F30C32EF1DD0B437003E02E9 /* MessagesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesTableViewController.swift; sourceTree = "<group>"; };
 		F325685C1DBFD9870096A2CD /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		F35235501DBF60F2006A8BA3 /* SteamApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteamApi.swift; sourceTree = "<group>"; };
 		F35235521DBF61F7006A8BA3 /* iOS */ = {isa = PBXFileReference; lastKnownFileType = folder; name = iOS; path = Carthage/Build/iOS; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				F3C5020B1DB4C20200AD4F3F /* ViewController.swift */,
 				F3DFCC791DC67CE3002F6039 /* ContactsViewController.swift */,
 				F325685C1DBFD9870096A2CD /* ChatViewController.swift */,
+				F30C32EF1DD0B437003E02E9 /* MessagesTableViewController.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -242,6 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F35235571DBF63CE006A8BA3 /* SteamDataTypes.swift in Sources */,
+				F30C32F01DD0B437003E02E9 /* MessagesTableViewController.swift in Sources */,
 				F3F882B41DC65B4900F50BC3 /* Helpers.swift in Sources */,
 				F35235511DBF60F2006A8BA3 /* SteamApi.swift in Sources */,
 				F3C5020C1DB4C20200AD4F3F /* ViewController.swift in Sources */,

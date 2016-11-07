@@ -43,7 +43,7 @@ class StackedContainersViewController: UIViewController {
     private var dragLocation: CGPoint?
     private var dragDirection: DragDirection?
 
-    override func viewDidLoad() {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewDidLoad()
         self.viewDidLayoutSubviews()
         self.foregroundViewToDefaultPosition()
