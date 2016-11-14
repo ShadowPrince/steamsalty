@@ -10,11 +10,8 @@ import Foundation
 import UIKit
 
 class EmotesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-    typealias Action = (_ named: SteamEmoteName) -> ()
-
     let queue = OperationQueue()
-    var action: Action?
-    
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return ChatSessionsManager.shared.emotes.count
     }
@@ -39,8 +36,7 @@ class EmotesViewController: UIViewController, UICollectionViewDataSource, UIColl
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let action = self.action {
-            action(ChatSessionsManager.shared.emotes[indexPath.row])
-        }
+        let emoteName = ChatSessionsManager.shared.emotes[indexPath.row]
+        self.targetPerform(ChatViewController.sayTextAppendActionSelector, sender: (emoteName as NSString))
     }
 }

@@ -15,13 +15,14 @@ class ActiveChatSessionsViewController: StackedContainersViewController {
     }
 }
 
-class ChatViewController: StackedContainerViewController, ChatSessionsManagerDelegate, UITextViewDelegate {
+class ChatViewController: StackedContainerViewController, ChatSessionsManagerDelegate, SettingsDelegate, UITextViewDelegate {
     struct ParsedMessage {
         var attributed: NSAttributedString!
         var msg: SteamChatMessage!
     }
 
     static let hideKeyboardActionSelector = #selector(hideKeyboardAction(_:))
+    static let sayTextAppendActionSelector = #selector(sayTextAppendAction(_:))
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var backButton: UIButton!
@@ -32,6 +33,9 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
 
     @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var emojisHeightConstraint: NSLayoutConstraint!
+    var emojisHeightConstant: CGFloat = 0.0
+    @IBOutlet weak var sendWidthConstraint: NSLayoutConstraint!
+    var sendWidthConstant: CGFloat = 0.0
 
     private var messagesViewController: MessagesTableViewController!
     private var emotesViewController: EmotesViewController!
@@ -47,10 +51,41 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
 
+        self.emojisHeightConstant = self.emojisHeightConstraint.constant
+        self.sendWidthConstant = self.sendWidthConstraint.constant
+
         self.newMessagesLabel.isHidden = true
         self.emojisHeightConstraint.constant = 0.0
-        self.emotesViewController.action = { self.sayTextView.text.append(" \($0) ") }
+        if Settings.shared.sendByNewline() {
+            self.sendWidthConstraint.constant = 0.0
+        }
+        self.scrollToBottom = true
+
         self.textViewDidEndEditing(self.sayTextView)
+    }
+
+    // since it's hard as nuts to create an array of weak 
+    // references of a object confirming to type here goes this abomination
+    // i'm not proud if it either
+    override func viewWillDisappear(_ animated: Bool) {
+        if let index = Settings.shared.delegates.index(where: { $0 === self }) {
+            Settings.shared.delegates.remove(at: index)
+        }
+        super.viewWillDisappear(animated)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        Settings.shared.delegates.append(self)
+        super.viewWillAppear(animated)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        if self.scrollToBottom {
+            self.scrollToBottom = false
+            self.messagesViewController.scrollToBottom(animated: true)
+        }
+
+        super.viewDidAppear(animated)
     }
 
     deinit {
@@ -75,6 +110,36 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
 
     @IBAction func hideKeyboardAction(_ sender: AnyObject) {
         self.view.endEditing(true)
+        self.emojisHeightConstraint.constant = 0.0
+    }
+
+    @IBAction func sayTextAppendAction(_ sender: AnyObject) {
+        self.sayTextView.text.append(" \(sender) ")
+    }
+
+    @IBAction func emojisTapAction(_ sender: AnyObject) {
+        UIView.animate(withDuration: 0.2) {
+            self.emojisHeightConstraint.constant = self.emojisHeightConstraint.constant == 0.0 ? self.emojisHeightConstant : 0.0
+            self.view.layoutSubviews()
+        }
+    }
+
+    @IBAction func sendMessageAction(_ sender: AnyObject) {
+        SteamApi.shared.chatSay(self.sayTextView.text, to: self.session.user.cid, handler: { (e) in
+            if e == nil {
+                OperationQueue.main.addOperation {
+                    let message = SteamChatMessage(author: ChatSessionsManager.shared.user.id, message: self.sayTextView.text, timestamp: UInt64(Date().timeIntervalSince1970))
+                    self.session.messages.append(message)
+                    self.messagesViewController.insertMessages([message])
+                    
+                    self.sayTextView.text = ""
+                }
+            } else {
+                OperationQueue.main.addOperation {
+                    self.presentError(e!)
+                }
+            }
+        })
     }
 
     func keyboardWillShow(notification: NSNotification) {
@@ -97,27 +162,13 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         self.bottomConstraint.constant = 0.0
     }
 
-    func textViewDidChange(_ textView: UITextView) {
-        if textView.text.characters.last == "\n" {
-            let fullText = textView.text!
-            let text = fullText.substring(to: fullText.index(fullText.endIndex, offsetBy: -1))
-            
-            SteamApi.shared.chatSay(text, to: self.session.user.cid, handler: { (e) in
-                if e == nil {
-                    OperationQueue.main.addOperation {
-                        textView.text = ""
-
-                        let message = SteamChatMessage(author: ChatSessionsManager.shared.user.id, message: text, timestamp: UInt64(Date().timeIntervalSince1970))
-                        self.session.messages.append(message)
-                        self.messagesViewController.insertMessages([message])
-                    }
-                } else {
-                    OperationQueue.main.addOperation {
-                        self.presentError(e!)
-                    }
-                }
-            })
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" && Settings.shared.sendByNewline() {
+            self.sendMessageAction(textView)
+            return false
         }
+
+        return true
     }
 
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -134,10 +185,16 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         }
     }
 
-    @IBAction func emojisTapAction(_ sender: AnyObject) {
-        UIView.animate(withDuration: 0.2) {
-            self.emojisHeightConstraint.constant = self.emojisHeightConstraint.constant == 0.0 ? 60.0 : 0.0
-            self.view.layoutSubviews()
+    func didChangeSetting(_ key: Settings.Keys, to value: Any) {
+        if key == .sendByNewline {
+            switch value as? Bool {
+            case true?:
+                self.sendWidthConstraint.constant = 0.0
+            case false?:
+                self.sendWidthConstraint.constant = self.sendWidthConstant
+            default:
+                break
+            }
         }
     }
 
@@ -163,7 +220,12 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
 
     override func becomeForeground() {
         self.isForeground = true
-        self.messagesViewController.scrollToBottom(animated: true)
+
+        if self.session.unread > 0 {
+            self.messagesViewController.scrollToBottom(animated: true)
+        } else {
+            self.messagesViewController.scrollToBottomIfShould()
+        }
 
         ChatSessionsManager.shared.markAsRead(session: self.session)
         self.backButton.isHidden = false
@@ -185,6 +247,10 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
                 self.messagesViewController.scrollToBottomIfShould()
             }
         }
+    }
+
+    func sessionOpenedExisting(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) {
+        self.scrollToBottom = true
     }
 
     func sessionUpdatedNext(at index: Int, from: ChatSessionsManager) {

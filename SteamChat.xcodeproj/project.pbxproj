@@ -14,6 +14,7 @@
 		F35235511DBF60F2006A8BA3 /* SteamApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35235501DBF60F2006A8BA3 /* SteamApi.swift */; };
 		F35235551DBF6205006A8BA3 /* Decodable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F35235541DBF6205006A8BA3 /* Decodable.framework */; };
 		F35235571DBF63CE006A8BA3 /* SteamDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35235561DBF63CE006A8BA3 /* SteamDataTypes.swift */; };
+		F37C5B521DD92B86009F8FB2 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37C5B511DD92B86009F8FB2 /* Settings.swift */; };
 		F3833B131DC0D5CC00D83E8B /* SteamPollManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3833B121DC0D5CC00D83E8B /* SteamPollManager.swift */; };
 		F3C5020A1DB4C20200AD4F3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3C502091DB4C20200AD4F3F /* AppDelegate.swift */; };
 		F3C5020C1DB4C20200AD4F3F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3C5020B1DB4C20200AD4F3F /* ViewController.swift */; };
@@ -36,6 +37,7 @@
 		F35235521DBF61F7006A8BA3 /* iOS */ = {isa = PBXFileReference; lastKnownFileType = folder; name = iOS; path = Carthage/Build/iOS; sourceTree = "<group>"; };
 		F35235541DBF6205006A8BA3 /* Decodable.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Decodable.framework; path = Carthage/Build/iOS/Decodable.framework; sourceTree = "<group>"; };
 		F35235561DBF63CE006A8BA3 /* SteamDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteamDataTypes.swift; sourceTree = "<group>"; };
+		F37C5B511DD92B86009F8FB2 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		F3833B121DC0D5CC00D83E8B /* SteamPollManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteamPollManager.swift; sourceTree = "<group>"; };
 		F3C502061DB4C20200AD4F3F /* SteamChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SteamChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C502091DB4C20200AD4F3F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 			children = (
 				F3DFCC7B1DC67D2A002F6039 /* ChatSessionsManager.swift */,
 				F3F882B31DC65B4900F50BC3 /* Helpers.swift */,
+				F37C5B511DD92B86009F8FB2 /* Settings.swift */,
 			);
 			name = Lib;
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 				F35235571DBF63CE006A8BA3 /* SteamDataTypes.swift in Sources */,
 				F30C32F01DD0B437003E02E9 /* MessagesTableViewController.swift in Sources */,
 				F3F882B41DC65B4900F50BC3 /* Helpers.swift in Sources */,
+				F37C5B521DD92B86009F8FB2 /* Settings.swift in Sources */,
 				F35235511DBF60F2006A8BA3 /* SteamApi.swift in Sources */,
 				F3C5020C1DB4C20200AD4F3F /* ViewController.swift in Sources */,
 				F3833B131DC0D5CC00D83E8B /* SteamPollManager.swift in Sources */,

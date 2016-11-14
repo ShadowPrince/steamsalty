@@ -63,10 +63,6 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
         self.targetPerform(ChatViewController.hideKeyboardActionSelector, sender: sender)
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.targetPerform(ChatViewController.hideKeyboardActionSelector, sender: scrollView)
-    }
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         for path in self.tableView.indexPathsForVisibleRows ?? [] {

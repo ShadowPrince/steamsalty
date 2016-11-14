@@ -7,8 +7,10 @@
 //
 
 import Foundation
+import UIKit
 
 protocol ChatSessionsManagerDelegate {
+    func sessionOpenedExisting(_ session: ChatSessionsManager.Session, from: ChatSessionsManager)
     func sessionReceivedMessages(_ messages: [SteamChatMessage], in session: ChatSessionsManager.Session, from: ChatSessionsManager)
     func sessionMarkedAsRead(_ session: ChatSessionsManager.Session, from: ChatSessionsManager)
     func sessionUpdatedStatus(_ session: ChatSessionsManager.Session, from: ChatSessionsManager)
@@ -21,7 +23,7 @@ extension Array where Element: ChatSessionsManager.Session {
     }
 }
 
-class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollManagerDelegate {
+class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollManagerDelegate, SettingsDelegate {
     class Session: NSObject {
         var user: SteamUser
         var messages = [SteamChatMessage]()
@@ -50,6 +52,11 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
 
     init() {
         SteamPollManager.shared.delegates.append(self)
+        Settings.shared.delegates.append(self)
+
+        if Settings.shared.pushNotifications() {
+            self.enablePushNotifications()
+        }
     }
 
     // polling
@@ -60,6 +67,10 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
             switch event.type {
             case .chatMessage:
                 let msgEvent = event as! SteamChatMessageEvent
+
+                if Settings.shared.pushNotifications() {
+                    self.sendPushNotification(event: msgEvent)
+                }
 
                 var _i = self.sessions.index(where: { $0.user.id == event.from })
                 if _i == nil {
@@ -149,6 +160,28 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
         let index = self.sessions.index(of: session)!
         self.delegates[index]?.sessionMarkedAsRead(session, from: self)
         self.delegates[-1]?.sessionMarkedAsRead(session, from: self)
+    }
+
+    func sendPushNotification(event: SteamChatMessageEvent) {
+        let notification = UILocalNotification()
+        notification.alertAction = "New message"
+        notification.alertTitle = self.contacts.first(where: { $0.id == event.from })?.name ?? "Unknown"
+        notification.alertBody = event.message.message
+        notification.timeZone = NSTimeZone.local
+        notification.fireDate = Date(timeIntervalSinceNow: 1.0)
+        notification.userInfo = ["userid": NSNumber.init(value: event.from), ]
+
+        UIApplication.shared.scheduleLocalNotification(notification)
+    }
+
+    func enablePushNotifications() {
+        UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+    }
+
+    func didChangeSetting(_ key: Settings.Keys, to value: Any) {
+        if key == .pushNotifications && value as? Bool == true {
+            self.enablePushNotifications()
+        }
     }
 
     // stack
