@@ -50,9 +50,11 @@ class WebAuthenticationViewController: UIViewController, UISplitViewControllerDe
             SteamPollManager.shared.start()
             return true
         } catch SteamApi.RequestError.AuthFailed {
+            self.dismiss(animated: true, completion: nil)
             self.presentError("Authentication failed")
             return false
         } catch let e {
+            self.dismiss(animated: true, completion: nil)
             let alert = UIAlertController(title: "Error:", message: String(describing: e), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Quit", style: .destructive, handler: { _ in exit(0) }))
             self.present(alert, animated: true, completion: nil)

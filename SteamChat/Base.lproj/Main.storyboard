@@ -67,18 +67,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZMp-ql-DtG">
-                                <frame key="frameInset" height="231"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <connections>
-                                    <segue destination="z8P-8h-BKe" kind="embed" identifier="foregroundSegue" id="VH5-SP-BeA"/>
-                                </connections>
-                            </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3jM-Rr-XVN">
                                 <frame key="frameInset" height="619"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
                                     <segue destination="z8P-8h-BKe" kind="embed" identifier="backgroundSegue" id="BbL-29-uOA"/>
+                                </connections>
+                            </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZMp-ql-DtG">
+                                <frame key="frameInset" height="231"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <segue destination="z8P-8h-BKe" kind="embed" identifier="foregroundSegue" id="VH5-SP-BeA"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -244,7 +244,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Bq0-2c-JWT"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Wy3-tq-QGc">
-                        <rect key="frame" x="0.0" y="0.0" width="250" height="180"/>
+                        <rect key="frame" x="0.0" y="0.0" width="250" height="50"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send by Return" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NFF-Vo-7LA">
@@ -257,46 +257,21 @@
                                     <action selector="switchedSettings:" destination="HfX-4m-KGo" eventType="valueChanged" id="BuX-zc-gMa"/>
                                 </connections>
                             </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zhz-lG-rrC">
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nVF-xl-8eE">
-                                <connections>
-                                    <action selector="switchedSettings:" destination="HfX-4m-KGo" eventType="valueChanged" id="7KU-51-YWz"/>
-                                </connections>
-                            </switch>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Since the app is not official, notifications will only work for limited amount of time after switching to another app." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="t9p-MY-iSh">
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="t9p-MY-iSh" firstAttribute="top" secondItem="Zhz-lG-rrC" secondAttribute="bottom" constant="13" id="CEI-o5-8tu"/>
-                            <constraint firstItem="nVF-xl-8eE" firstAttribute="centerY" secondItem="Zhz-lG-rrC" secondAttribute="centerY" id="EgT-6B-PRQ"/>
                             <constraint firstItem="nmo-0Z-1g2" firstAttribute="centerY" secondItem="NFF-Vo-7LA" secondAttribute="centerY" id="Otb-0S-XDS"/>
-                            <constraint firstItem="Zhz-lG-rrC" firstAttribute="top" secondItem="NFF-Vo-7LA" secondAttribute="bottom" constant="16" id="QXK-Y8-oWM"/>
-                            <constraint firstItem="Zhz-lG-rrC" firstAttribute="leading" secondItem="NFF-Vo-7LA" secondAttribute="leading" id="asl-5b-XOs"/>
                             <constraint firstItem="NFF-Vo-7LA" firstAttribute="top" secondItem="gUP-g1-QL4" secondAttribute="bottom" constant="8" id="eiw-Sm-Vou"/>
-                            <constraint firstItem="Bq0-2c-JWT" firstAttribute="top" secondItem="t9p-MY-iSh" secondAttribute="bottom" constant="8" id="g8e-7R-hOB"/>
-                            <constraint firstItem="nVF-xl-8eE" firstAttribute="trailing" secondItem="Wy3-tq-QGc" secondAttribute="trailingMargin" id="mwf-f6-4Pb"/>
-                            <constraint firstItem="t9p-MY-iSh" firstAttribute="trailing" secondItem="Wy3-tq-QGc" secondAttribute="trailingMargin" id="qSU-Pv-3aV"/>
                             <constraint firstItem="NFF-Vo-7LA" firstAttribute="leading" secondItem="Wy3-tq-QGc" secondAttribute="leadingMargin" id="t0h-Uz-XVs"/>
                             <constraint firstItem="nmo-0Z-1g2" firstAttribute="top" secondItem="gUP-g1-QL4" secondAttribute="bottom" constant="8" id="vrI-pW-zOE"/>
                             <constraint firstItem="nmo-0Z-1g2" firstAttribute="trailing" secondItem="Wy3-tq-QGc" secondAttribute="trailingMargin" id="wPW-fV-SgY"/>
-                            <constraint firstItem="t9p-MY-iSh" firstAttribute="leading" secondItem="Zhz-lG-rrC" secondAttribute="leading" id="zxq-gy-E6t"/>
                         </constraints>
                     </view>
-                    <value key="contentSizeForViewInPopover" type="size" width="250" height="180"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="250" height="50"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="250" height="180"/>
+                    <size key="freeformSize" width="250" height="50"/>
                     <connections>
-                        <outlet property="notificationsSwitch" destination="nVF-xl-8eE" id="NEG-gW-TaB"/>
                         <outlet property="sendByNewlineSwitch" destination="nmo-0Z-1g2" id="TDd-ml-CW3"/>
                     </connections>
                 </viewController>
@@ -584,6 +559,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </textView>
                                             </subviews>
+                                            <color key="backgroundColor" red="0.95197117419999999" green="0.95197117419999999" blue="0.95197117419999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
@@ -614,6 +590,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </textView>
                                             </subviews>
+                                            <color key="backgroundColor" red="0.95197117419999999" green="0.95197117419999999" blue="0.95197117419999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
@@ -647,11 +624,11 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="3404" y="312.14392803598201"/>
+            <point key="canvasLocation" x="3466" y="320"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="fWy-D2-Qz9"/>
+        <segue reference="6W0-gB-E9y"/>
         <segue reference="BbL-29-uOA"/>
     </inferredMetricsTieBreakers>
 </document>

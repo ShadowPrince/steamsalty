@@ -60,7 +60,9 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
             self.sendWidthConstraint.constant = 0.0
         }
         self.scrollToBottom = true
-
+        
+        self.titleLabel.text = "Select contact"
+        self.personaStateLabel.text = ""
         self.textViewDidEndEditing(self.sayTextView)
     }
 
@@ -118,10 +120,12 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     }
 
     @IBAction func emojisTapAction(_ sender: AnyObject) {
-        UIView.animate(withDuration: 0.2) {
-            self.emojisHeightConstraint.constant = self.emojisHeightConstraint.constant == 0.0 ? self.emojisHeightConstant : 0.0
-            self.view.layoutSubviews()
-        }
+        UIView.animate(withDuration: 0.2,
+                       animations: {
+                        self.emojisHeightConstraint.constant = self.emojisHeightConstraint.constant == 0.0 ? self.emojisHeightConstant : 0.0
+                        self.view.layoutSubviews() },
+                       completion: { (d) in
+                        self.messagesViewController.scrollToBottom(animated: true) })
     }
 
     @IBAction func sendMessageAction(_ sender: AnyObject) {

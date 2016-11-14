@@ -45,6 +45,7 @@ class StackedContainersViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidLoad()
+        
         self.viewDidLayoutSubviews()
         self.foregroundViewToDefaultPosition()
         self.backgroundViewToDefaultPosition()
@@ -63,7 +64,7 @@ class StackedContainersViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.topOffset = self.prefersStatusBarHidden ? 0.0 : 20.0
-        self.topOffset += self.navigationController?.isNavigationBarHidden ?? false == false ? 48.0 : 0.0
+        self.topOffset += self.navigationController?.isNavigationBarHidden ?? true ? 0.0 : 48.0
         self.foregroundViewToDefaultPosition()
         self.backgroundViewToDefaultPosition()
     }
