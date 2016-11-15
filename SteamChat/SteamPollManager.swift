@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol SteamPollManagerDelegate {
+protocol SteamPollManagerDelegate: AnyObject {
     func pollReceived(events: [SteamEvent], manager: SteamPollManager)
     func pollError(_ error: Error, manager: SteamPollManager)
     func pollStatus(_ user: SteamUser, contacts: [SteamUser], emotes: [SteamEmoteName])
@@ -48,6 +48,27 @@ class SteamPollManager {
             SteamApi.shared.poll { (result, error) in
                 if error == nil {
                     print(result!)
+
+                    for event in result!.events {
+                        switch event.type {
+                        case .personaState:
+                            SteamApi.shared.state(of: event.from) { user, error in
+                                if let user = user {
+                                    let newEvent = SteamUserUpdateEvent(type: .userUpdate,
+                                                                        timestamp: event.timestamp,
+                                                                        from: event.from,
+                                                                        user: user)
+                                    self.delegates.forEach { $0.pollReceived(events: [newEvent], manager: self) }
+                                } else {
+                                    self.delegates.forEach { $0.pollError(error!, manager: self) }
+                                }
+                            }
+                            
+                        default:
+                            break
+                        }
+                    }
+                    
                     self.delegates.forEach { $0.pollReceived(events: result!.events, manager: self) }
                     self.start()
                 } else if let error = error {

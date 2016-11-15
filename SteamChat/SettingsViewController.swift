@@ -44,7 +44,9 @@ class SettingsViewController: UIViewController {
 
     @IBAction func logoutAction(_ sender: AnyObject) {
         HTTPCookieStorage.shared.cookies?.forEach { HTTPCookieStorage.shared.deleteCookie($0) }
-        UserDefaults.standard.set(value: false, forKey: "wasAuthenticated")
+        ChatSessionsManager.shared.sessions.removeAll()
+        
+        UserDefaults.standard.set(false, forKey: "wasAuthenticated")
         self.targetPerform(SplitViewController.unwindToAuthActionSelector, sender: self)
     }
 

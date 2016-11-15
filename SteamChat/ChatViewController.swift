@@ -90,6 +90,14 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         super.viewDidAppear(animated)
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if self.isForeground {
+            self.backButton.isHidden = !(self.splitViewController?.isCollapsed ?? false)
+        }
+    }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -100,6 +108,9 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
             self.emotesViewController = segue.destination as! EmotesViewController
         case "messagesViewController"?:
             self.messagesViewController = segue.destination as! MessagesTableViewController
+        case "toInfo"?:
+            segue.destination.forcePopover(segue: segue)
+            (segue.destination as! ContactInfoViewController).user = self.session.user
         default: break
         }
 
@@ -107,7 +118,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     }
 
     @IBAction func backAction(_ sender: AnyObject) {
-        self.navigationController?.popViewController(animated: true)
+        let _ = self.navigationController?.popViewController(animated: true)
     }
 
     @IBAction func hideKeyboardAction(_ sender: AnyObject) {
@@ -116,6 +127,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     }
 
     @IBAction func sayTextAppendAction(_ sender: AnyObject) {
+        self.textViewDidBeginEditing(self.sayTextView)
         self.sayTextView.text.append(" \(sender) ")
     }
 
@@ -215,7 +227,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         self.messagesViewController.appendMessages(self.session.messages)
         self.messagesViewController.reload()
 
-        self.personaStateLabel.setToState(session.user.state)
+        self.personaStateLabel.setState(of: session.user)
         self.titleLabel.text = "\(self.session.user.name)"
         self.avatarImageView.loadImage(at: self.session.user.avatar)
 
@@ -232,7 +244,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         }
 
         ChatSessionsManager.shared.markAsRead(session: self.session)
-        self.backButton.isHidden = false
+        self.backButton.isHidden = !(self.splitViewController?.isCollapsed ?? false)
         self.newMessagesLabel.isHidden = true
     }
 
@@ -267,7 +279,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     }
 
     func sessionUpdatedStatus(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) {
-        self.personaStateLabel.setToState(session.user.state)
+        self.personaStateLabel.setState(of: session.user)
     }
 
     func sessionMarkedAsRead(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) { }

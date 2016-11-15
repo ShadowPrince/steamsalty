@@ -54,10 +54,10 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         var indexPaths = [IndexPath]()
         for event in events {
             switch event.type {
-            case .personaState:
-                let e = event as! SteamPersonaStateEvent
+            case .userUpdate:
+                let e = event as! SteamUserUpdateEvent
                 if let index = self.items.index(of: e.from) {
-                    self.items[index].user.state = e.state
+                    self.items[index].user = e.user
                     indexPaths.append(IndexPath(row: index, section: 0))
                 }
             default: break
@@ -81,7 +81,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         OperationQueue.main.addOperation {
             self.selfAvatarImageView.loadImage(at: user.avatar)
             self.selfNameLabel.text = user.name
-            self.selfStateLabel.setToState(user.state)
+            self.selfStateLabel.setState(of: user)
             self.tableView.reloadData()
         }
     }
@@ -132,12 +132,20 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         let item = self.items[indexPath.row]
         (cell.viewWithTag(1) as! UILabel).text = item.user.name
         (cell.viewWithTag(2) as! AvatarImageView).loadImage(at: item.user.avatar)
-        (cell.viewWithTag(3) as! PersonaStateLabel).setToState(item.user.state)
+        (cell.viewWithTag(3) as! PersonaStateLabel).setState(of: item.user)
         
         let unreadLabel = cell.viewWithTag(4) as! UILabel
         let unreadMessages = item.session?.unread ?? 0
         unreadLabel.isHidden = unreadMessages == 0
         unreadLabel.text = "\(unreadMessages)"
+
+        let gameLabel = cell.viewWithTag(5) as! UILabel
+        if let game = item.user.currentGame {
+            gameLabel.isHidden = false
+            gameLabel.text = game.name
+        } else {
+            gameLabel.isHidden = true
+        }
         
         return cell
     }
@@ -150,8 +158,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         if segue.identifier == "toChat" {
             ChatSessionsManager.shared.openChat(with: (sender as! Item).user)
         } else if segue.identifier == "toSettings" {
-            segue.destination.modalPresentationStyle = .popover
-            segue.destination.popoverPresentationController?.delegate = PopoverStyleDelegate.shared
+            segue.destination.forcePopover(segue: segue)
         }
 
         super.prepare(for: segue, sender: sender)

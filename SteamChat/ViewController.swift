@@ -80,10 +80,21 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         return true
     }
 
+    static let hideSenderViewIfCollapsedSelector = #selector(hideSenderViewIfCollapsed(_:))
+    @IBAction func hideSenderViewIfCollapsed(_ sender: AnyObject) {
+        if let view = sender as? UIView {
+            view.isHidden = !self.isCollapsed
+        }
+    }
+
     static let unwindToAuthActionSelector = #selector(unwindToAuthAction(_:))
     @IBAction func unwindToAuthAction(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    static let showMasterViewSelector = #selector(showMasterViewAction(_:))
+    @IBAction func showMasterViewAction(_ sender: AnyObject) {
     }
 }
 

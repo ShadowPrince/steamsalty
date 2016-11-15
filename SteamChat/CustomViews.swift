@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 
-@IBDesignable
+
 class ChatTextView: UITextView {
     static let offset: CGFloat = 4.0
     static let inset: CGFloat = 8.0
@@ -43,11 +43,11 @@ class ChatTextView: UITextView {
 
         self.layer.cornerRadius = 10.0
         self.layer.borderWidth = 1.5
-        self.layer.borderColor = self.tintColor.cgColor
+        self.layer.borderColor = UIColor(rgb: 0xDDDDDD).cgColor
     }
 }
 
-@IBDesignable
+
 class NewMessagesLabel: UILabel {
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -62,7 +62,7 @@ class NewMessagesLabel: UILabel {
     }
 }
 
-@IBDesignable
+
 class AvatarImageView: UIImageView {
     let queue = OperationQueue()
 
@@ -92,11 +92,32 @@ class AvatarImageView: UIImageView {
     }
 }
 
+
+class AvatarFadedImageView: AvatarImageView {
+    let fadeLayer = CAGradientLayer()
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        fadeLayer.colors = [ UIColor.init(colorLiteralRed: 0, green: 0, blue: 0, alpha: 0.0).cgColor,
+                             self.backgroundColor!.cgColor, ]
+        fadeLayer.locations = [0.1, 0.7, ]
+
+        self.layer.addSublayer(fadeLayer)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.layer.cornerRadius = 0.0
+        self.fadeLayer.frame = self.bounds
+    }
+}
+
 class PersonaStateLabel: UILabel {
-    func setToState(_ state: SteamPersonaStateEvent.State) {
-        switch state {
+    func setState(of user: SteamUser) {
+        switch user.state {
         case .online:
-            self.textColor = UIColor.init(rgb: 0xABC49A)
+            self.textColor = UIColor.init(rgb: 0x09C0FF)
             self.text = "online"
         case .away:
             self.textColor = UIColor.init(rgb: 0x75AFB8)
@@ -110,6 +131,10 @@ class PersonaStateLabel: UILabel {
         default:
             self.textColor = UIColor.black
             self.text = "???"
+        }
+
+        if user.currentGame != nil {
+            self.text?.append(" 🎮")
         }
     }
 }

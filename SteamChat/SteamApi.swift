@@ -166,6 +166,7 @@ class SteamApi {
 
                 switch errorString {
                 case "OK":
+                    print(dict)
                     self.api.messageNumber += 1
                     handler(try SteamPollResponse.decode(dict), nil)
                     return
@@ -174,6 +175,16 @@ class SteamApi {
                 default:
                     throw RequestError.PollError(errorString)
                 }
+            } catch let e {
+                handler(nil, e)
+            }
+        }
+    }
+
+    func state(of contact: SteamUserId, handler: @escaping (SteamUser?, Error?) -> ()) {
+        self.web.request("chat/friendstate/\(contact)", parameters: [:]).responseJSON(queue: self.queue, options: []) { response in
+            do {
+                handler(try SteamUser.decode(response.result.value), nil)
             } catch let e {
                 handler(nil, e)
             }

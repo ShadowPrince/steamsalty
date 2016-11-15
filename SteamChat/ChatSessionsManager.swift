@@ -98,12 +98,12 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
                         self.delegates[-1]?.sessionReceivedMessages([msgEvent.message], in: session, from: self)
                     }
                 }
-            case .personaState:
+            case .userUpdate:
                 if let index = self.sessions.index(where: { $0.user.id == event.from } ) {
-                    let stateEvent = event as! SteamPersonaStateEvent
+                    let updateEvent = event as! SteamUserUpdateEvent
                     let session = self.sessions[index]
 
-                    session.user.state = stateEvent.state
+                    session.user = updateEvent.user
                     
                     OperationQueue.main.addOperation {
                         self.delegates[index]?.sessionUpdatedStatus(session, from: self)

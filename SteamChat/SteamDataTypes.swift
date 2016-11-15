@@ -11,6 +11,7 @@ import Decodable
 
 typealias SteamUserId = UInt64
 typealias SteamCommunityId = String
+typealias SteamGameId = String
 typealias SteamEmoteName = String
 
 struct SteamPollResponse {
@@ -47,6 +48,7 @@ class SteamEvent {
         case personaState = "personastate"
         case chatMessage = "saytext"
         case typing = "typing"
+        case userUpdate = "__internal_userUpdate"
         case unknown
     }
 
@@ -62,11 +64,11 @@ class SteamEvent {
 }
 
 class SteamPersonaStateEvent: SteamEvent {
-    // away - 3
     enum State: Int {
-        case online = 1
-        case away = 3
         case offline = 0
+        case online = 1
+        case busy = 2
+        case away = 3
         case snooze = 4
         case unknown = -1
     }
@@ -75,6 +77,15 @@ class SteamPersonaStateEvent: SteamEvent {
 
     required init(type: EventType, timestamp: UInt64, from: SteamUserId, state: State) {
         self.state = state
+        super.init(type: type, timestamp: timestamp, from: from)
+    }
+}
+
+class SteamUserUpdateEvent: SteamEvent {
+    let user: SteamUser
+
+    required init(type: EventType, timestamp: UInt64, from: SteamUserId, user: SteamUser) {
+        self.user = user
         super.init(type: type, timestamp: timestamp, from: from)
     }
 }
@@ -112,6 +123,17 @@ extension SteamChatMessage: Decodable {
     }
 }
 
+struct SteamGame {
+    let id: SteamGameId?
+    let name: String
+}
+
+extension SteamGame: Decodable {
+    static func decode(_ j: Any) throws -> SteamGame {
+        return try SteamGame(id: j =>? "m_nInGameAppID", name: j => "m_strInGameName")
+    }
+}
+
 struct SteamUser: Equatable {
     let id: SteamUserId
     let cid: SteamCommunityId
@@ -120,10 +142,20 @@ struct SteamUser: Equatable {
 
     var lastMessageTimestamp: UInt64
     var state: SteamPersonaStateEvent.State
+    var currentGame: SteamGame?
 
     var avatar: URL {
         let prefix = avatarHash.substring(to: avatarHash.index(avatarHash.startIndex, offsetBy: 2))
         return URL.init(string: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/\(prefix)/\(avatarHash)_medium.jpg")!
+    }
+
+    var fullAvatar: URL {
+        let prefix = avatarHash.substring(to: avatarHash.index(avatarHash.startIndex, offsetBy: 2))
+        return URL.init(string: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/\(prefix)/\(avatarHash)_full.jpg")!
+    }
+
+    var communityProfile: URL {
+        return URL.init(string: "https://steamcommunity.com/profiles/\(self.cid)")!
     }
 
     var lastMessageDate: Date {
@@ -142,7 +174,8 @@ extension SteamUser: Decodable {
                              name: j => "m_strName",
                              avatarHash: j => "m_strAvatarHash",
                              lastMessageTimestamp: j => "m_tsLastMessage",
-                             state: SteamPersonaStateEvent.State(rawValue: j => "m_ePersonaState") ?? .unknown)
+                             state: SteamPersonaStateEvent.State(rawValue: j => "m_ePersonaState") ?? .unknown,
+                             currentGame: (j =>? "m_bInGame" == true) ? SteamGame.decode(j) : nil)
                              
     }
 }

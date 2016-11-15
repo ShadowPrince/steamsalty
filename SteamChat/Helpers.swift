@@ -64,6 +64,70 @@ extension UIViewController {
     }
 }
 
+extension UIViewController {
+    func forcePopover(segue: UIStoryboardSegue) {
+        segue.destination.modalPresentationStyle = .popover
+        segue.destination.popoverPresentationController?.delegate = PopoverStyleDelegate.shared
+
+        if #available(iOS 9.0, *) {
+            if let popOver = segue.destination.popoverPresentationController,
+               let anchor  = popOver.sourceView,
+               popOver.sourceRect == CGRect() {
+                popOver.sourceRect = anchor.bounds
+            }
+        }
+    }
+}
+
+class UniversalActivity: UIActivity {
+    private var _activityTitle: String?
+    override var activityTitle: String? {
+        get {
+            return self._activityTitle
+        }
+
+        set {
+            self._activityTitle = newValue
+        }
+    }
+
+    private var _activityImage: UIImage?
+    override var activityImage: UIImage? {
+        get {
+            return _activityImage
+        }
+
+        set {
+            self._activityImage = newValue
+        }
+    }
+
+    var canPerformHandler: (Any) -> (Bool) = { _ in return true }
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
+        for item in activityItems {
+            if self.canPerformHandler(item) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    var performHandler: () -> () = {}
+    override func perform() {
+        self.performHandler()
+    }
+
+    static func instanceTitled(_ titled: String, icon: UIImage?, handler: @escaping () -> ()) -> UIActivity {
+        let instance = UniversalActivity()
+        instance.activityTitle = titled
+        instance.activityImage = icon
+        instance.performHandler = handler
+
+        return instance
+    }
+}
+
 class PopoverStyleDelegate: NSObject, UIPopoverPresentationControllerDelegate {
     static let shared = PopoverStyleDelegate()
     
