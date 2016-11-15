@@ -244,7 +244,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Bq0-2c-JWT"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Wy3-tq-QGc">
-                        <rect key="frame" x="0.0" y="0.0" width="250" height="50"/>
+                        <rect key="frame" x="0.0" y="0.0" width="250" height="100"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send by Return" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NFF-Vo-7LA">
@@ -257,20 +257,29 @@
                                     <action selector="switchedSettings:" destination="HfX-4m-KGo" eventType="valueChanged" id="BuX-zc-gMa"/>
                                 </connections>
                             </switch>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3y6-VO-o0Y">
+                                <state key="normal" title="Logout"/>
+                                <connections>
+                                    <action selector="logoutAction:" destination="HfX-4m-KGo" eventType="touchUpInside" id="L1o-kX-XtU"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="3y6-VO-o0Y" firstAttribute="top" secondItem="nmo-0Z-1g2" secondAttribute="bottom" constant="8" id="8uc-K7-mb9"/>
                             <constraint firstItem="nmo-0Z-1g2" firstAttribute="centerY" secondItem="NFF-Vo-7LA" secondAttribute="centerY" id="Otb-0S-XDS"/>
+                            <constraint firstItem="3y6-VO-o0Y" firstAttribute="leading" secondItem="Wy3-tq-QGc" secondAttribute="leadingMargin" id="TYp-Jl-HNl"/>
                             <constraint firstItem="NFF-Vo-7LA" firstAttribute="top" secondItem="gUP-g1-QL4" secondAttribute="bottom" constant="8" id="eiw-Sm-Vou"/>
+                            <constraint firstItem="3y6-VO-o0Y" firstAttribute="trailing" secondItem="Wy3-tq-QGc" secondAttribute="trailingMargin" id="sii-Si-eF4"/>
                             <constraint firstItem="NFF-Vo-7LA" firstAttribute="leading" secondItem="Wy3-tq-QGc" secondAttribute="leadingMargin" id="t0h-Uz-XVs"/>
                             <constraint firstItem="nmo-0Z-1g2" firstAttribute="top" secondItem="gUP-g1-QL4" secondAttribute="bottom" constant="8" id="vrI-pW-zOE"/>
                             <constraint firstItem="nmo-0Z-1g2" firstAttribute="trailing" secondItem="Wy3-tq-QGc" secondAttribute="trailingMargin" id="wPW-fV-SgY"/>
                         </constraints>
                     </view>
-                    <value key="contentSizeForViewInPopover" type="size" width="250" height="50"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="250" height="100"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="250" height="50"/>
+                    <size key="freeformSize" width="250" height="100"/>
                     <connections>
                         <outlet property="sendByNewlineSwitch" destination="nmo-0Z-1g2" id="TDd-ml-CW3"/>
                     </connections>
@@ -286,9 +295,11 @@
                     <connections>
                         <segue destination="0du-Ht-eDC" kind="relationship" relationship="masterViewController" id="3aT-go-5Vu"/>
                         <segue destination="J8l-J8-p1z" kind="relationship" relationship="detailViewController" id="fWy-D2-Qz9"/>
+                        <segue destination="DYV-74-qOk" kind="unwind" identifier="unwindToAuth" unwindAction="unwindToAuthWithSegue:" id="SD6-Uc-Xo3"/>
                     </connections>
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DSo-Jf-rav" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="DYV-74-qOk" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="962" y="139"/>
         </scene>
@@ -628,7 +639,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="6W0-gB-E9y"/>
+        <segue reference="fWy-D2-Qz9"/>
         <segue reference="BbL-29-uOA"/>
     </inferredMetricsTieBreakers>
 </document>

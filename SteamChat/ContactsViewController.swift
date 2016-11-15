@@ -19,7 +19,7 @@ extension Array where Element: ContactsViewController.Item {
     }
 }
 
-class ContactsViewController: UIViewController, UIPopoverPresentationControllerDelegate, UITableViewDataSource, UITableViewDelegate, SteamPollManagerDelegate, ChatSessionsManagerDelegate {
+class ContactsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SteamPollManagerDelegate, ChatSessionsManagerDelegate {
     class Item: CustomStringConvertible {
         var user: SteamUser
         var session: ChatSessionsManager.Session?
@@ -151,13 +151,9 @@ class ContactsViewController: UIViewController, UIPopoverPresentationControllerD
             ChatSessionsManager.shared.openChat(with: (sender as! Item).user)
         } else if segue.identifier == "toSettings" {
             segue.destination.modalPresentationStyle = .popover
-            segue.destination.popoverPresentationController?.delegate = self
+            segue.destination.popoverPresentationController?.delegate = PopoverStyleDelegate.shared
         }
 
         super.prepare(for: segue, sender: sender)
-    }
-
-    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-        return .none
     }
 }

@@ -64,6 +64,14 @@ extension UIViewController {
     }
 }
 
+class PopoverStyleDelegate: NSObject, UIPopoverPresentationControllerDelegate {
+    static let shared = PopoverStyleDelegate()
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
+    }
+}
+
 class MessageParser {
     static let shared = MessageParser()
 

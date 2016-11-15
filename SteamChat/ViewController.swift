@@ -31,7 +31,9 @@ class WebAuthenticationViewController: UIViewController, UISplitViewControllerDe
             OperationQueue.main.addOperation {
                 if result {
                     UserDefaults.standard.set(true, forKey: "wasAuthenticated")
-                    self.performSegue(withIdentifier: "proceedSegue", sender: nil)
+                    self.dismiss(animated: false) {
+                        self.performSegue(withIdentifier: "proceedSegue", sender: nil)
+                    }
                 } else {
                     self.loadWebAuth()
                     self.dismiss(animated: true, completion: nil)
@@ -76,6 +78,12 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
 
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
         return true
+    }
+
+    static let unwindToAuthActionSelector = #selector(unwindToAuthAction(_:))
+    @IBAction func unwindToAuthAction(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 }
 
