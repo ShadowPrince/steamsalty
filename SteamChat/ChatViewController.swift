@@ -46,6 +46,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     private var index: Int?
     private var session: ChatSessionsManager.Session!
 
+    // MARK: - view
     override func viewDidLoad() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -59,16 +60,18 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         if Settings.shared.sendByNewline() {
             self.sendWidthConstraint.constant = 0.0
         }
+
+        self.messagesViewController.tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
         self.scrollToBottom = true
         
         self.titleLabel.text = "Select contact"
         self.personaStateLabel.text = ""
-        self.backButton.isHidden = true
+        self.backButtonVisibility(set: false)
         self.textViewDidEndEditing(self.sayTextView)
     }
 
     // since it's hard as nuts to create an array of weak 
-    // references of a object confirming to type here goes this abomination
+    // references of a object conforming to type here goes this abomination
     // i'm not proud if it either
     override func viewWillDisappear(_ animated: Bool) {
         if let index = Settings.shared.delegates.index(where: { $0 === self }) {
@@ -95,7 +98,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         super.viewDidLayoutSubviews()
 
         if self.isForeground {
-            self.backButton.isHidden = !(self.splitViewController?.isCollapsed ?? false)
+            self.backButtonVisibility(set: self.splitViewController?.isCollapsed ?? false)
         }
     }
 
@@ -117,6 +120,8 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
 
         super.prepare(for: segue, sender: sender)
     }
+
+    // MARK: - actions
 
     @IBAction func backAction(_ sender: AnyObject) {
         let _ = self.navigationController?.popViewController(animated: true)
@@ -161,6 +166,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         })
     }
 
+    // MARK: - keyboard
     func keyboardWillShow(notification: NSNotification) {
         let endFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
         
@@ -181,6 +187,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         self.bottomConstraint.constant = 0.0
     }
 
+    // MARK: - text view
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" && Settings.shared.sendByNewline() {
             self.sendMessageAction(textView)
@@ -204,10 +211,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         }
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return touch.view != self.backButton
-    }
-
+    // MARK: - settings
     func didChangeSetting(_ key: Settings.Keys, to value: Any) {
         if key == .sendByNewline {
             switch value as? Bool {
@@ -221,6 +225,23 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         }
     }
 
+    // MARK: - helpers
+    func updateUnreadCounter() {
+        self.newMessagesLabel.text = "\(self.session.unread)"
+        self.newMessagesLabel.isHidden = self.session.unread == 0
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return touch.view != self.backButton
+    }
+
+    func backButtonVisibility(set to: Bool) {
+        UIView.animate(withDuration: 0.3) {
+            self.backButton.alpha = to ? 1.0 : 0.0
+        }
+    }
+
+    // MARK: - stacked view
     override func setIndex(_ index: Int) {
         if let lastIndex = self.index {
             ChatSessionsManager.shared.delegates.removeValue(forKey: lastIndex)
@@ -251,16 +272,17 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         }
 
         ChatSessionsManager.shared.markAsRead(session: self.session)
-        self.backButton.isHidden = !(self.splitViewController?.isCollapsed ?? false)
+        self.backButtonVisibility(set: self.splitViewController?.isCollapsed ?? false)
         self.newMessagesLabel.isHidden = true
     }
 
     override func becomeBackground() {
         self.isForeground = false
 
-        self.backButton.isHidden = true
+        self.backButtonVisibility(set: false)
     }
 
+    // MARK: - session
     func sessionReceivedMessages(_ messages: [SteamChatMessage], in session: ChatSessionsManager.Session, from: ChatSessionsManager) {
         self.messagesViewController.insertMessages(messages)
 
@@ -290,9 +312,4 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     }
 
     func sessionMarkedAsRead(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) { }
-
-    func updateUnreadCounter() {
-        self.newMessagesLabel.text = "\(self.session.unread)"
-        self.newMessagesLabel.isHidden = self.session.unread == 0
-    }
 }

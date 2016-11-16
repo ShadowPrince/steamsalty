@@ -87,6 +87,7 @@ class SteamPollManager {
                             self.start()
                             return
                         default:
+                            SteamApi.shared.reset()
                             Thread.sleep(forTimeInterval: 5.0)
                             self.start()
                         }

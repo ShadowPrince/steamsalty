@@ -21,6 +21,10 @@ extension Array where Element: ChatSessionsManager.Session {
     subscript (user: SteamUser) -> Element? {
         return self.first(where: { $0.user == user } )
     }
+
+    subscript (userid: SteamUserId) -> Element? {
+        return self.first(where: { $0.user.id == userid })
+    }
 }
 
 class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollManagerDelegate, SettingsDelegate {
@@ -28,6 +32,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
         var user: SteamUser
         var messages = [SteamChatMessage]()
         var unread: Int = 0
+        var typingUntil: Date = Date()
         
         init(user: SteamUser) {
             self.user = user
@@ -84,6 +89,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
                     let session = self.sessions[i]
                     session.messages.append(msgEvent.message)
                     session.unread += 1
+                    session.typingUntil = Date()
                     
                     if self.stackIndex != i {
                         if i != self.stackNextIndex {
@@ -96,6 +102,15 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
                     OperationQueue.main.addOperation {
                         self.delegates[i]?.sessionReceivedMessages([msgEvent.message], in: session, from: self)
                         self.delegates[-1]?.sessionReceivedMessages([msgEvent.message], in: session, from: self)
+                    }
+                }
+            case .typing:
+                if let index = self.sessions.index(where: { $0.user.id == event.from } ) {
+                    let session = self.sessions[index]
+                    
+                    session.typingUntil = Date().addingTimeInterval(5.0)
+                    OperationQueue.main.addOperation {
+                        self.delegates[index]?.sessionUpdatedStatus(session, from: self)
                     }
                 }
             case .userUpdate:

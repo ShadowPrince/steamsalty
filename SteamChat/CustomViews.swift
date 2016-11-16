@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Alamofire
 
 
 class ChatTextView: UITextView {
@@ -76,15 +77,9 @@ class AvatarImageView: UIImageView {
     }
 
     func loadImage(at url: URL) {
-        queue.addOperation {
-            let request = URLRequest(url: url)
-            do {
-                let data = try NSURLConnection.sendSynchronousRequest(request, returning: nil)
-                OperationQueue.main.addOperation {
-                    self.image = UIImage(data: data)
-                }
-            } catch let e {
-                print(e)
+        Alamofire.request(url).responseData { response in
+            if let data = response.result.value {
+                self.image = UIImage(data: data)
             }
         }
     }
@@ -98,7 +93,7 @@ class AvatarFadedImageView: AvatarImageView {
 
         fadeLayer.colors = [ UIColor.init(colorLiteralRed: 0, green: 0, blue: 0, alpha: 0.0).cgColor,
                              self.backgroundColor!.cgColor, ]
-        fadeLayer.locations = [0.1, 0.7, ]
+        fadeLayer.locations = [0.1, 0.9, ]
 
         self.layer.addSublayer(fadeLayer)
     }

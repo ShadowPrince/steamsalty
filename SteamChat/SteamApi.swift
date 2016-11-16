@@ -8,9 +8,11 @@
 
 import Foundation
 import Alamofire
+import Decodable
 
 protocol SteamApiMethod {
     func request(_ tail: String, parameters: Parameters) -> DataRequest
+    func reset()
 }
 
 class SteamApi {
@@ -33,15 +35,18 @@ class SteamApi {
             parameters["sessionid"] = self.sessionId
             return Alamofire.request("https://steamcommunity.com/".appending(tail), method: .post, parameters: parameters)
         }
+
+        func reset() { }
     }
 
     class InternalApi: SteamApiMethod {
-        var requestNumber = 0, messageNumber = 49
+        var requestNumber = 0, messageNumber = 0
         let host, key, id: String
-        init(_ host: String, key: String, id: String) {
+        init(_ host: String, key: String, id: String, message: Int) {
             self.host = host
             self.key = key
             self.id = id
+            self.messageNumber = message
         }
 
         func request(_ tail: String, parameters _parameters: Parameters) -> DataRequest {
@@ -54,8 +59,6 @@ class SteamApi {
             parameters["message"] = self.messageNumber
             parameters["jsonp"] = ""
             parameters["sectimeout"] = 35
-            parameters["secidletime"] = 20
-            parameters["_"] = UInt64(Date().timeIntervalSince1970)
 
             return Alamofire.request(self.host.appending(tail), parameters: parameters)
         }
@@ -69,12 +72,17 @@ class SteamApi {
                 throw RequestError.Error(response.result.value ?? "Request failed")
             }
         }
+
+        func reset() {
+            self.requestNumber = 0
+            self.messageNumber = 0
+        }
     }
 
     static var shared: SteamApi!
     static func sharedInit() throws {
         do {
-            var web: String?, host: String?, key: String?, umqid: String?
+            var web: String?, host: String?, key: String?, umqid: String?, message: Int?
             
             let request = URLRequest(url: URL(string: "https://steamcommunity.com/chat")!)
             if let data = try? NSURLConnection.sendSynchronousRequest(request, returning: nil), let html = String(data: data, encoding: .utf8) {
@@ -98,17 +106,18 @@ class SteamApi {
                     switch errorString {
                     case "OK":
                         umqid = dict["umqid"] as? String
+                        message = (dict["message"] as? Int) ?? 0
                     default:
                         break
                     }
                 }
                 
-                if let web = web, let umqid = umqid {
+                if let web = web, let umqid = umqid, let message = message {
                     shared = SteamApi(
                         web: WebApi(web),
-                        internal: InternalApi(host, key: key, id: umqid)
+                        internal: InternalApi(host, key: key, id: umqid, message: message)
                     )
-                    
+
                     return
                 }
             }
@@ -126,6 +135,11 @@ class SteamApi {
     init(web: SteamApiMethod, internal api: InternalApi) {
         self.web = web
         self.api = api
+    }
+
+    func reset() {
+        self.api.reset()
+        self.web.reset()
     }
 
     func status(handler: @escaping (SteamUser?, [SteamUser]?, [SteamEmoteName]?, Error?) -> ()) {
@@ -166,8 +180,7 @@ class SteamApi {
 
                 switch errorString {
                 case "OK":
-                    print(dict)
-                    self.api.messageNumber += 1
+                    self.api.messageNumber = (dict["messagelast"] as? Int) ?? self.api.messageNumber
                     handler(try SteamPollResponse.decode(dict), nil)
                     return
                 case "Timeout":
@@ -175,6 +188,8 @@ class SteamApi {
                 default:
                     throw RequestError.PollError(errorString)
                 }
+            } catch let e where e is DecodingError {
+                handler(nil, e)
             } catch let e {
                 handler(nil, e)
             }

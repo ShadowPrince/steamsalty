@@ -11,6 +11,7 @@ import Alamofire
 
 class WebAuthenticationViewController: UIViewController, UIWebViewDelegate {
     @IBOutlet weak var webView: UIWebView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     let url = URL(string: "https://steamcommunity.com/chat")!
 
@@ -18,7 +19,13 @@ class WebAuthenticationViewController: UIViewController, UIWebViewDelegate {
         self.loadWebAuth()
     }
 
+    func webViewDidStartLoad(_ webView: UIWebView) {
+        self.activityIndicator.startAnimating()
+    }
+    
     func webViewDidFinishLoad(_ webView: UIWebView) {
+        self.activityIndicator.stopAnimating()
+        
         if webView.request?.url == self.url {
             if self.apiInit() {
                 self.performSegue(withIdentifier: "proceedSegue", sender: nil)
