@@ -108,7 +108,7 @@ class AvatarFadedImageView: AvatarImageView {
         self.layer.cornerRadius = 0.0
 
         CATransaction.begin()
-        CATransaction.setAnimationDuration(1.0)
+        CATransaction.setAnimationDuration(0.5)
 
         self.fadeLayer.frame = self.bounds
         CATransaction.commit()

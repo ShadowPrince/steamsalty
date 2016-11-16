@@ -15,7 +15,7 @@ class ActiveChatSessionsViewController: StackedContainersViewController {
     }
 }
 
-class ChatViewController: StackedContainerViewController, ChatSessionsManagerDelegate, SettingsDelegate, UITextViewDelegate {
+class ChatViewController: StackedContainerViewController, ChatSessionsManagerDelegate, SettingsDelegate, UITextViewDelegate, UIGestureRecognizerDelegate {
     struct ParsedMessage {
         var attributed: NSAttributedString!
         var msg: SteamChatMessage!
@@ -63,6 +63,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         
         self.titleLabel.text = "Select contact"
         self.personaStateLabel.text = ""
+        self.backButton.isHidden = true
         self.textViewDidEndEditing(self.sayTextView)
     }
 
@@ -141,17 +142,19 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     }
 
     @IBAction func sendMessageAction(_ sender: AnyObject) {
-        SteamApi.shared.chatSay(self.sayTextView.text, to: self.session.user.cid, handler: { (e) in
+        let text = self.sayTextView.text!
+        self.sayTextView.text = ""
+
+        SteamApi.shared.chatSay(text, to: self.session.user.cid, handler: { (e) in
             if e == nil {
                 OperationQueue.main.addOperation {
-                    let message = SteamChatMessage(author: ChatSessionsManager.shared.user.id, message: self.sayTextView.text, timestamp: UInt64(Date().timeIntervalSince1970))
+                    let message = SteamChatMessage(author: ChatSessionsManager.shared.user.id, message: text, timestamp: UInt64(Date().timeIntervalSince1970))
                     self.session.messages.append(message)
                     self.messagesViewController.insertMessages([message])
-                    
-                    self.sayTextView.text = ""
                 }
             } else {
                 OperationQueue.main.addOperation {
+                    self.sayTextView.text = text
                     self.presentError(e!)
                 }
             }
@@ -199,6 +202,10 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
             textView.text = self.placeholderMessage
             textView.textColor = UIColor.gray
         }
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return touch.view != self.backButton
     }
 
     func didChangeSetting(_ key: Settings.Keys, to value: Any) {

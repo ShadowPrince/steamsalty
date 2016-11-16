@@ -644,6 +644,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8jl-ek-N28" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer cancelsTouchesInView="NO" id="5Kl-Cx-724">
                     <connections>
+                        <outlet property="delegate" destination="z8P-8h-BKe" id="0oL-lY-3tF"/>
                         <segue destination="ya5-ll-pH6" kind="popoverPresentation" identifier="toInfo" popoverAnchorView="za2-6a-0ZS" id="26t-3r-hTY">
                             <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                         </segue>

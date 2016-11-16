@@ -39,7 +39,7 @@ class StackedContainersViewController: UIViewController {
 
     private var topOffset: CGFloat = 0.0
     private let headerHeight: CGFloat = 30.0
-    private let dragTreshold: CGFloat = 50.0
+    private let dragTreshold: CGFloat = 100.0
 
     private var dragLocation: CGPoint?
     private var dragDirection: DragDirection?
