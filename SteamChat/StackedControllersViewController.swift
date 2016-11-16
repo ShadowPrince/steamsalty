@@ -39,6 +39,7 @@ class StackedContainersViewController: UIViewController {
 
     private var topOffset: CGFloat = 0.0
     private let headerHeight: CGFloat = 30.0
+    private let dragTreshold: CGFloat = 50.0
 
     private var dragLocation: CGPoint?
     private var dragDirection: DragDirection?
@@ -93,7 +94,7 @@ class StackedContainersViewController: UIViewController {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let start = self.dragLocation, let end = touches.first?.location(in: self.view) {
             let dX = abs(end.x - start.x), dY = abs(end.y - start.y)
-            if max(dX, dY) > 100.0 {
+            if max(dX, dY) > self.dragTreshold {
                 self.dragDirection = dX > dY ? (end.x > start.x ? .right : .left) : .vertical
             }
             

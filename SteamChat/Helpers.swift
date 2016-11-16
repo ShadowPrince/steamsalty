@@ -47,7 +47,16 @@ extension UIColor {
 
         self.init(red: r, green: g, blue: b, alpha: alpha)
     }
-    
+
+    func rgbString() -> String {
+        var r, g, b: CGFloat
+        r = 0.0
+        g = 0.0
+        b = 0.0
+        self.getRed(&r, green: &g, blue: &b, alpha: nil)
+
+        return String(format: "%02X%02X%02X", r * 255, g * 255, b * 255)
+    }
 }
 
 extension UIViewController {
@@ -76,6 +85,13 @@ extension UIViewController {
                 popOver.sourceRect = anchor.bounds
             }
         }
+    }
+}
+
+extension UIWebView {
+    func loadBackgroundColor(_ color: UIColor) {
+        self.loadHTMLString("<html><body bgcolor=\"#\(color.rgbString())\"></body></html>", baseURL: nil)
+        self.isOpaque = false
     }
 }
 

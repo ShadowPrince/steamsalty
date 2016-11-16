@@ -9,59 +9,46 @@
 import UIKit
 import Alamofire
 
-class WebAuthenticationViewController: UIViewController, UISplitViewControllerDelegate {
-    let queue = OperationQueue()
-
+class WebAuthenticationViewController: UIViewController, UIWebViewDelegate {
     @IBOutlet weak var webView: UIWebView!
 
+    let url = URL(string: "https://steamcommunity.com/chat")!
+
     override func viewDidAppear(_ animated: Bool) {
-        if UserDefaults.standard.bool(forKey: "wasAuthenticated") {
-            self.authCompletedAction(self)
-        } else {
-            self.loadWebAuth()
-        }
+        self.loadWebAuth()
     }
 
-    @IBAction func authCompletedAction(_ sender: AnyObject) {
-        let alert = UIAlertController(title: "Loading...", message: "...", preferredStyle: .alert)
-        self.present(alert, animated: true, completion: nil)
-
-        self.queue.addOperation {
-            let result = self.apiInit()
-            OperationQueue.main.addOperation {
-                if result {
-                    UserDefaults.standard.set(true, forKey: "wasAuthenticated")
-                    self.dismiss(animated: false) {
-                        self.performSegue(withIdentifier: "proceedSegue", sender: nil)
-                    }
-                } else {
-                    self.loadWebAuth()
-                    self.dismiss(animated: true, completion: nil)
-                }
+    func webViewDidFinishLoad(_ webView: UIWebView) {
+        if webView.request?.url == self.url {
+            if self.apiInit() {
+                self.performSegue(withIdentifier: "proceedSegue", sender: nil)
+            } else {
+                self.loadWebAuth()
             }
         }
+
+        print(webView.request?.url)
     }
 
     func loadWebAuth() {
-        self.webView.loadRequest(URLRequest(url: URL(string: "http://steamcommunity.com/chat")!))
+        self.webView.loadRequest(URLRequest(url: self.url))
     }
 
     func apiInit() -> Bool {
         do {
             try SteamPollManager.shared.initialize()
             SteamPollManager.shared.start()
+
             return true
         } catch SteamApi.RequestError.AuthFailed {
-            self.dismiss(animated: true, completion: nil)
             self.presentError("Authentication failed")
-            return false
         } catch let e {
-            self.dismiss(animated: true, completion: nil)
             let alert = UIAlertController(title: "Error:", message: String(describing: e), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Quit", style: .destructive, handler: { _ in exit(0) }))
             self.present(alert, animated: true, completion: nil)
-            return false
         }
+
+        return false
     }
 }
 
@@ -92,7 +79,7 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         self.dismiss(animated: true, completion: nil)
         self.dismiss(animated: true, completion: nil)
     }
-    
+
     static let showMasterViewSelector = #selector(showMasterViewAction(_:))
     @IBAction func showMasterViewAction(_ sender: AnyObject) {
     }

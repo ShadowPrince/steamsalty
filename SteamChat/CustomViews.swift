@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 
-
 class ChatTextView: UITextView {
     static let offset: CGFloat = 4.0
     static let inset: CGFloat = 8.0
@@ -30,10 +29,10 @@ class ChatTextView: UITextView {
     func setFrameTo(_ size: CGRect, parent: CGRect) {
         let width = size.width
         let x = self.isIngoing ? ChatTextView.offset : parent.width - width - ChatTextView.offset
-        self.frame = CGRect(x: x,
-                            y: ChatTextView.offset,
-                            width: width,
-                            height: size.height)
+        self.frame = CGRect(x: ceil(x),
+                            y: ceil(ChatTextView.offset),
+                            width: ceil(width),
+                            height: ceil(size.height))
     }
     
     override func awakeFromNib() {
@@ -42,7 +41,7 @@ class ChatTextView: UITextView {
         self.textContainer.lineFragmentPadding = 0.0
 
         self.layer.cornerRadius = 10.0
-        self.layer.borderWidth = 1.5
+        self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor(rgb: 0xDDDDDD).cgColor
     }
 }
@@ -61,7 +60,6 @@ class NewMessagesLabel: UILabel {
         self.layer.cornerRadius = self.frame.width / 2
     }
 }
-
 
 class AvatarImageView: UIImageView {
     let queue = OperationQueue()
@@ -92,7 +90,6 @@ class AvatarImageView: UIImageView {
     }
 }
 
-
 class AvatarFadedImageView: AvatarImageView {
     let fadeLayer = CAGradientLayer()
 
@@ -109,7 +106,12 @@ class AvatarFadedImageView: AvatarImageView {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.layer.cornerRadius = 0.0
+
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(1.0)
+
         self.fadeLayer.frame = self.bounds
+        CATransaction.commit()
     }
 }
 

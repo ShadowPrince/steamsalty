@@ -33,6 +33,7 @@ class ContactInfoViewController: UIViewController, UIScrollViewDelegate, SteamPo
         self.avatarView.loadImage(at: user.fullAvatar)
         self.nameLabel.text = user.name
         self.updateUserStatus()
+        self.profileWebView.loadBackgroundColor(UIColor.black)
         self.profileWebView.loadRequest(URLRequest(url: user.communityProfile))
     }
 
@@ -46,6 +47,10 @@ class ContactInfoViewController: UIViewController, UIScrollViewDelegate, SteamPo
         events.filter { $0.type == .userUpdate && $0.from == self.user.id }
               .forEach { self.user = ($0 as! SteamUserUpdateEvent).user }
 
+        OperationQueue.main.addOperation {
+            self.updateUserStatus()
+        }
+
         /*
          I wonder if this is better
         for event in events {
@@ -58,10 +63,6 @@ class ContactInfoViewController: UIViewController, UIScrollViewDelegate, SteamPo
             }
         }
          */
-
-        OperationQueue.main.addOperation {
-            self.updateUserStatus()
-        }
     }
     
     func pollError(_ error: Error, manager: SteamPollManager) { }
