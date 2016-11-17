@@ -102,10 +102,10 @@
                                 <inset key="separatorInset" minX="43" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="evv-tQ-t0B">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="1000" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="evv-tQ-t0B" id="AuU-e1-aiw">
-                                            <frame key="frameInset" width="375" height="43"/>
+                                            <frame key="frameInset" width="1000" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Carver" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J8D-Wl-Com">
@@ -545,7 +545,7 @@
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ibz-we-hfH">
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="80" id="Hem-RH-Lcl"/>
+                                            <constraint firstAttribute="width" constant="40" id="Hem-RH-Lcl"/>
                                         </constraints>
                                         <state key="normal" title="←">
                                             <color key="titleColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -729,7 +729,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vtM-qt-gOK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3468" y="757"/>
+            <point key="canvasLocation" x="2633" y="872"/>
         </scene>
         <!--Messages Table View Controller-->
         <scene sceneID="uXf-w4-ENG">
@@ -808,6 +808,28 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="0.0" reuseIdentifier="typingCell" id="5wR-0x-LDc">
+                                        <rect key="frame" x="0.0" y="188" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5wR-0x-LDc" id="sHr-qB-HT6">
+                                            <frame key="frameInset" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="✎..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g79-d6-jGJ">
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="g79-d6-jGJ" firstAttribute="bottom" secondItem="sHr-qB-HT6" secondAttribute="bottomMargin" id="1pQ-su-hzq"/>
+                                                <constraint firstItem="g79-d6-jGJ" firstAttribute="leading" secondItem="sHr-qB-HT6" secondAttribute="leadingMargin" id="4jb-JU-a3B"/>
+                                                <constraint firstItem="g79-d6-jGJ" firstAttribute="top" secondItem="sHr-qB-HT6" secondAttribute="topMargin" id="AiC-aW-0tq"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="g79-d6-jGJ" secondAttribute="trailing" id="wXi-qA-KfC"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </tableViewCell>
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="kdy-Cy-Qdu" id="VFd-nP-kYv"/>
@@ -838,7 +860,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="3468" y="466"/>
+            <point key="canvasLocation" x="3468" y="465.96701649175418"/>
         </scene>
     </scenes>
     <resources>

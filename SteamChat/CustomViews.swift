@@ -12,7 +12,7 @@ import Alamofire
 
 
 class ChatTextView: UITextView {
-    static let offset: CGFloat = 4.0
+    static let offset: CGFloat = 2.0
     static let inset: CGFloat = 8.0
     static let combined: CGFloat = offset + inset
 

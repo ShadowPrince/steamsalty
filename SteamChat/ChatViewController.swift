@@ -61,7 +61,6 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
             self.sendWidthConstraint.constant = 0.0
         }
 
-        self.messagesViewController.tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
         self.scrollToBottom = true
         
         self.titleLabel.text = "Select contact"
@@ -187,11 +186,14 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         self.bottomConstraint.constant = 0.0
     }
 
+
     // MARK: - text view
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" && Settings.shared.sendByNewline() {
             self.sendMessageAction(textView)
             return false
+        } else {
+            ChatSessionsManager.shared.typingNotify(session: self.session)
         }
 
         return true

@@ -54,6 +54,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
     var user: SteamUser!
 
     private var index = 0
+    private var lastTypingNotificationDate = Date()
 
     init() {
         SteamPollManager.shared.delegates.append(self)
@@ -167,6 +168,13 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
                     }
                 }
             }
+        }
+    }
+
+    func typingNotify(session: Session) {
+        if self.lastTypingNotificationDate.timeIntervalSinceNow < -5.0 {
+            self.lastTypingNotificationDate = Date()
+            SteamApi.shared.chatType(to: session.user.cid, handler: nil)
         }
     }
 

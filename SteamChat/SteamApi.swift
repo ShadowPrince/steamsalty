@@ -16,6 +16,8 @@ protocol SteamApiMethod {
 }
 
 class SteamApi {
+    typealias SimpleHandler = (Error?) -> ()
+
     enum RequestError: Error {
         case Error(String)
         case AuthFailed
@@ -67,7 +69,16 @@ class SteamApi {
             if let javascript = response.result.value,
                 let match = NSRegularExpression.matches(in: javascript, of: "(\\{.*\\})", options: [.dotMatchesLineSeparators, .anchorsMatchLines]).first {
                 let jsonObject = try JSONSerialization.jsonObject(with: match[0], options: [])
-                return jsonObject as! Dictionary<String, Any>
+                let dict = jsonObject as! Dictionary<String, Any>
+
+                let errorString = dict["error"] as! String
+                switch errorString {
+                case "OK":
+                    self.messageNumber = (dict["messagelast"] as? Int) ?? self.messageNumber
+                    return dict
+                default:
+                    throw RequestError.Error(errorString)
+                }
             } else {
                 throw RequestError.Error(response.result.value ?? "Request failed")
             }
@@ -103,6 +114,8 @@ class SteamApi {
                     let jsonObject = try JSONSerialization.jsonObject(with: match[0], options: [])
                     let dict = jsonObject as! Dictionary<String, Any>
                     let errorString = dict["error"] as! String
+
+                    print(dict)
                     switch errorString {
                     case "OK":
                         umqid = dict["umqid"] as? String
@@ -176,18 +189,11 @@ class SteamApi {
         self.api.request("ISteamWebUserPresenceOAuth/Poll/v0001/", parameters: ["use_accountids": 1, ]).responseString (queue: self.queue, encoding: .utf8) { response in
             do {
                 let dict = try self.api.parse(response: response)
-                let errorString = dict["error"] as! String
-
-                switch errorString {
-                case "OK":
-                    self.api.messageNumber = (dict["messagelast"] as? Int) ?? self.api.messageNumber
-                    handler(try SteamPollResponse.decode(dict), nil)
-                    return
-                case "Timeout":
-                    throw RequestError.PollTimeout
-                default:
-                    throw RequestError.PollError(errorString)
-                }
+                handler(try SteamPollResponse.decode(dict), nil)
+            } catch RequestError.Error(let e) where e == "Timeout" {
+                handler(nil, RequestError.PollTimeout)
+            } catch RequestError.Error(let e) {
+                handler(nil, RequestError.PollError(e))
             } catch let e where e is DecodingError {
                 handler(nil, e)
             } catch let e {
@@ -216,26 +222,33 @@ class SteamApi {
         }
     }
 
-    func chatSay(_ text: String, to user: SteamCommunityId, handler: @escaping (Error?) -> ()) {
+    func chatType(to user: SteamCommunityId, handler: SimpleHandler?) {
+        self.api
+            .request("ISteamWebUserPresenceOAuth/Message/v0001/",
+                     parameters: ["type": "typing",
+                                  "steamid_dst": user, ])
+            .responseString(queue: self.queue, encoding: .utf8) { response in
+                do {
+                    let _ = try self.api.parse(response: response)
+                    handler?(nil)
+                } catch let e {
+                    handler?(e)
+                }
+        }
+    }
+
+    func chatSay(_ text: String, to user: SteamCommunityId, handler: SimpleHandler?) {
         self.api
             .request("ISteamWebUserPresenceOAuth/Message/v0001/",
                      parameters: ["type": "saytext",
                                   "steamid_dst": user,
                                   "text": text, ])
-            .responseString { response in
+            .responseString(queue: self.queue, encoding: .utf8) { response in
                 do {
-                    let dict = try self.api.parse(response: response)
-                    let errorString = dict["error"] as! String
-                    switch errorString {
-                        case "OK":
-                        self.api.messageNumber += 1
-                        handler(nil)
-                        return
-                    default:
-                        throw RequestError.Error(errorString)
-                    }
+                    let _ = try self.api.parse(response: response)
+                    handler?(nil)
                 } catch let e {
-                    handler(e)
+                    handler?(e)
                 }
         }
     }

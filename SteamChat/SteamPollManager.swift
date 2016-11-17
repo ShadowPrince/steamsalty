@@ -44,11 +44,8 @@ class SteamPollManager {
         }
         
         self.queue.addOperation {
-            print("Pollin")
             SteamApi.shared.poll { (result, error) in
                 if error == nil {
-                    print(result!)
-
                     for event in result!.events {
                         switch event.type {
                         case .personaState:

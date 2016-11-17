@@ -16,8 +16,40 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
     }
 
     @IBOutlet weak var tableView: UITableView!
+
     var messages = [ParsedMessage]()
+    var isTyping = false
     var session: ChatSessionsManager.Session!
+    
+    let typingNotifierQueue = OperationQueue()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        self.tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 30, right: 0)
+        self.typingNotifierQueue.addOperation {
+            while true {
+                if let session = self.session {
+                    let isShowing = self.isTyping
+                    let shouldShow = session.typingUntil > Date()
+                    self.isTyping = shouldShow
+
+                    if isShowing != shouldShow {
+                        let path = [IndexPath(row: 0, section: 1)]
+                        OperationQueue.main.addOperation {
+                            if !isShowing && shouldShow {
+                                self.tableView.insertRows(at: path, with: .automatic)
+                            } else if isShowing && !shouldShow {
+                                self.tableView.deleteRows(at: path, with: .automatic)
+                            }
+                        }
+                    }
+                }
+
+                Thread.sleep(forTimeInterval: 1.0)
+            }
+        }
+    }
 
     func scrollToBottom(animated: Bool) {
         if !self.messages.isEmpty {
@@ -66,33 +98,54 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         for path in self.tableView.indexPathsForVisibleRows ?? [] {
-            let cell = self.tableView.cellForRow(at: path)!
-            let message = self.messages[path.row]
-            let textView = cell.viewWithTag(1) as! ChatTextView
-            let size = ChatTextView.textBounds(text: message.attributed, width: self.parent!.view.frame.width / 2)
-            textView.setFrameTo(size, parent: self.parent!.view.frame)
+            if path.section == 0 {
+                let cell = self.tableView.cellForRow(at: path)!
+                let message = self.messages[path.row]
+                let textView = cell.viewWithTag(1) as! ChatTextView
+                let size = ChatTextView.textBounds(text: message.attributed, width: self.parent!.view.frame.width / 2)
+                textView.setFrameTo(size, parent: self.parent!.view.frame)
+            }
         }
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.messages.count
+        switch section {
+        case 0:
+            return self.messages.count
+        default:
+            return self.isTyping ? 1 : 0
+        }
+    }
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let width = (self.parent!.view.frame.width / 2)
-        return ChatTextView.textBounds(text: self.messages[indexPath.row].attributed, width: width).height + ChatTextView.offset * 2
+        switch indexPath.section {
+        case 0:
+            let width = (self.parent!.view.frame.width / 2)
+            return ChatTextView.textBounds(text: self.messages[indexPath.row].attributed, width: width).height + ChatTextView.offset * 2
+        default:
+            return 30.0
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = self.messages[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: message.msg.author == self.session.user.id ? "ingoingCell" : "outgoingCell")!
-        let textView = cell.viewWithTag(1) as! ChatTextView
-        textView.attributedText = message.attributed
-
-        let size = ChatTextView.textBounds(text: message.attributed, width: self.parent!.view.frame.width / 2)
-        textView.setFrameTo(size, parent: self.parent!.view.frame)
-
-        return cell
+        switch indexPath.section {
+        case 0:
+            let message = self.messages[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: message.msg.author == self.session.user.id ? "ingoingCell" : "outgoingCell")!
+            let textView = cell.viewWithTag(1) as! ChatTextView
+            textView.attributedText = message.attributed
+            
+            let size = ChatTextView.textBounds(text: message.attributed, width: self.parent!.view.frame.width / 2)
+            textView.setFrameTo(size, parent: self.parent!.view.frame)
+            
+            return cell
+        default:
+            return tableView.dequeueReusableCell(withIdentifier: "typingCell")!
+        }
     }
 
 }
