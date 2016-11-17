@@ -43,10 +43,16 @@ class SettingsViewController: UIViewController {
     }
 
     @IBAction func logoutAction(_ sender: AnyObject) {
-        HTTPCookieStorage.shared.cookies?.forEach { HTTPCookieStorage.shared.deleteCookie($0) }
+        for name in ["steamLogin", "steamLoginSecure", "steamRememberLogin", ] {
+            if let cookie = HTTPCookieStorage.shared.cookies?.first(where: { $0.name.hasPrefix(name) }) {
+                HTTPCookieStorage.shared.deleteCookie(cookie)
+            }
+        }
+
         ChatSessionsManager.shared.sessions.removeAll()
-        
-        UserDefaults.standard.set(false, forKey: "wasAuthenticated")
+        Settings.shared.set(value: false, for: .isAuthenticated)
+        SteamPollManager.shared.isRunning = false
+
         self.targetPerform(SplitViewController.unwindToAuthActionSelector, sender: self)
     }
 

@@ -19,6 +19,7 @@ class SteamPollManager {
     
     static let shared = SteamPollManager()
     var delegates = [SteamPollManagerDelegate]()
+    var isRunning = true
 
     func initialize() throws {
         do {
@@ -42,8 +43,13 @@ class SteamPollManager {
             print("API not initialized")
             return
         }
+
+        if !self.isRunning {
+            return
+        }
         
         self.queue.addOperation {
+            print("pollin...")
             SteamApi.shared.poll { (result, error) in
                 if error == nil {
                     for event in result!.events {

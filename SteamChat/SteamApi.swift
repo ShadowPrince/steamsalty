@@ -187,6 +187,7 @@ class SteamApi {
 
     func poll(handler: @escaping (SteamPollResponse?, Error?) -> ()) {
         self.api.request("ISteamWebUserPresenceOAuth/Poll/v0001/", parameters: ["use_accountids": 1, ]).responseString (queue: self.queue, encoding: .utf8) { response in
+            print(response.result.value ?? "empty")
             do {
                 let dict = try self.api.parse(response: response)
                 handler(try SteamPollResponse.decode(dict), nil)

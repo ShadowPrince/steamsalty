@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="h5c-yO-hef">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -40,12 +40,41 @@
                     <connections>
                         <outlet property="activityIndicator" destination="KyY-55-MHX" id="GI5-jR-w4B"/>
                         <outlet property="webView" destination="Jbr-UT-8lm" id="9cn-Zi-bLC"/>
-                        <segue destination="Dor-yg-554" kind="show" identifier="proceedSegue" id="ApI-nO-1Tp"/>
+                        <segue destination="Y4Q-GU-e9v" kind="unwind" identifier="unwindFromAuth" unwindAction="unwindFromWebAuth:" id="J7J-8S-Yz7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <exit id="Y4Q-GU-e9v" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="297" y="139"/>
+            <point key="canvasLocation" x="886" y="-1069"/>
+        </scene>
+        <!--Initialization View Controller-->
+        <scene sceneID="86r-NE-hMx">
+            <objects>
+                <viewController id="h5c-yO-hef" customClass="InitializationViewController" customModule="SteamChat" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="YOK-oW-ycE"/>
+                        <viewControllerLayoutGuide type="bottom" id="8yf-q7-gCQ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="nGJ-7y-olN">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="tbd-o3-9Y7">
+                                <frame key="frameInset" minX="177" minY="323" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="Dor-yg-554" kind="show" identifier="proceed" id="6dh-aj-tMi"/>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="toWebAuth" id="m2H-6F-DQm"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zmP-yJ-0Dz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="89" y="-612"/>
         </scene>
         <!--Active Chat Sessions View Controller-->
         <scene sceneID="A6W-mU-IBU">
@@ -419,7 +448,7 @@
                                         </constraints>
                                     </view>
                                     <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bnr-4c-9Yl">
-                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.25882352939999997" green="0.2901960784" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
                                     </webView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vlH-2x-KLB">
                                         <constraints>
@@ -489,7 +518,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DSo-Jf-rav" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="DYV-74-qOk" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="962" y="139"/>
+            <point key="canvasLocation" x="953" y="164"/>
         </scene>
         <!--Chat View Controller-->
         <scene sceneID="5WR-tA-2FO">
@@ -869,7 +898,7 @@
         <image name="share" width="100" height="100"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="fWy-D2-Qz9"/>
         <segue reference="BbL-29-uOA"/>
-        <segue reference="6W0-gB-E9y"/>
     </inferredMetricsTieBreakers>
 </document>

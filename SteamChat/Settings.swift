@@ -17,6 +17,7 @@ class Settings {
         case version = "version"
         case sendByNewline = "sendByNewline"
         case pushNotifications = "pushNotifications"
+        case isAuthenticated = "isAuthenticated"
     }
 
     static let shared = Settings()
@@ -28,7 +29,8 @@ class Settings {
         if UserDefaults.standard.double(forKey: Keys.version.rawValue) != self.version {
             UserDefaults.standard.setValuesForKeys([Keys.version.rawValue: self.version,
                                                     Keys.sendByNewline.rawValue: true,
-                                                    Keys.pushNotifications.rawValue: false, ])
+                                                    Keys.pushNotifications.rawValue: false,
+                                                    Keys.isAuthenticated.rawValue: false, ])
         }
     }
 
@@ -38,6 +40,10 @@ class Settings {
 
     func pushNotifications() -> Bool {
         return UserDefaults.standard.bool(forKey: Keys.pushNotifications.rawValue)
+    }
+
+    func isAuthenticated() -> Bool {
+        return UserDefaults.standard.bool(forKey: Keys.isAuthenticated.rawValue)
     }
 
     func set(value: Any?, for key: Keys) {

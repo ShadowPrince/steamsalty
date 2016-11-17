@@ -25,7 +25,7 @@ extension SteamPollResponse: Decodable {
                                  events: try NSArray.decode(j => "messages").map {
                                     let json = $0 as! Dictionary<String, Any>
                                     let timestamp = try UInt64.decode(json["utc_timestamp"])
-                                    let from = try SteamUserId.decode(json["accountid_from"])
+                                    let from = (try? SteamUserId.decode(json["accountid_from"])) ?? 0
 
                                     if let type = try SteamEvent.EventType(rawValue: json => "type") {
                                         switch type {

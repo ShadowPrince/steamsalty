@@ -131,7 +131,8 @@ class PersonaStateLabel: UILabel {
         }
 
         if user.currentGame != nil {
-            self.text?.append(" 🎮")
+            //self.text?.append(" 🎮")
+            self.text?.append(" ♞")
         }
     }
 }
