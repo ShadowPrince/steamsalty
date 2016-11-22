@@ -45,6 +45,8 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
 
     static let shared = ChatSessionsManager()
 
+    let typingInterval: CFTimeInterval = 8.0
+
     let queue = OperationQueue()
     var delegates = [Int: ChatSessionsManagerDelegate]()
     var sessions = [Session]()
@@ -109,7 +111,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
                 if let index = self.sessions.index(where: { $0.user.id == event.from } ) {
                     let session = self.sessions[index]
                     
-                    session.typingUntil = Date().addingTimeInterval(5.0)
+                    session.typingUntil = Date().addingTimeInterval(self.typingInterval)
                     OperationQueue.main.addOperation {
                         self.delegates[index]?.sessionUpdatedStatus(session, from: self)
                     }
@@ -172,7 +174,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
     }
 
     func typingNotify(session: Session) {
-        if self.lastTypingNotificationDate.timeIntervalSinceNow < -5.0 {
+        if self.lastTypingNotificationDate.timeIntervalSinceNow < -self.typingInterval {
             self.lastTypingNotificationDate = Date()
             SteamApi.shared.chatType(to: session.user.cid, handler: nil)
         }

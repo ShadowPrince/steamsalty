@@ -16,9 +16,9 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
     }
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var typingIndicatorLabel: UILabel!
 
     var messages = [ParsedMessage]()
-    var isTyping = false
     var session: ChatSessionsManager.Session!
     
     let typingNotifierQueue = OperationQueue()
@@ -26,22 +26,18 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 30, right: 0)
+        self.tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 10, right: 0)
+        self.typingIndicatorLabel.isHidden = true
+        
         self.typingNotifierQueue.addOperation {
             while true {
                 if let session = self.session {
-                    let isShowing = self.isTyping
+                    let isShowing = !self.typingIndicatorLabel.isHidden
                     let shouldShow = session.typingUntil > Date()
-                    self.isTyping = shouldShow
 
                     if isShowing != shouldShow {
-                        let path = [IndexPath(row: 0, section: 1)]
                         OperationQueue.main.addOperation {
-                            if !isShowing && shouldShow {
-                                self.tableView.insertRows(at: path, with: .automatic)
-                            } else if isShowing && !shouldShow {
-                                self.tableView.deleteRows(at: path, with: .automatic)
-                            }
+                            self.typingIndicatorLabel.isHidden = !shouldShow
                         }
                     }
                 }
@@ -113,18 +109,19 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
         case 0:
             return self.messages.count
         default:
-            return self.isTyping ? 1 : 0
+            return 0
         }
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0:
-            let width = (self.parent!.view.frame.width / 2)
+            //let width = (self.parent!.view.frame.width / 2)
+            let width = self.view.frame.width / 2
             return ChatTextView.textBounds(text: self.messages[indexPath.row].attributed, width: width).height + ChatTextView.offset * 2
         default:
             return 30.0
@@ -144,7 +141,7 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
             
             return cell
         default:
-            return tableView.dequeueReusableCell(withIdentifier: "typingCell")!
+            return UITableViewCell()
         }
     }
 

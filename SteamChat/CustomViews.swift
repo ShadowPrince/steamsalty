@@ -12,7 +12,7 @@ import Alamofire
 
 
 class ChatTextView: UITextView {
-    static let offset: CGFloat = 2.0
+    static let offset: CGFloat = 4.0
     static let inset: CGFloat = 8.0
     static let combined: CGFloat = offset + inset
 
@@ -31,7 +31,7 @@ class ChatTextView: UITextView {
         let width = size.width
         let x = self.isIngoing ? ChatTextView.offset : parent.width - width - ChatTextView.offset
         self.frame = CGRect(x: ceil(x),
-                            y: ceil(ChatTextView.offset),
+                            y: 0,
                             width: ceil(width),
                             height: ceil(size.height))
     }
@@ -44,6 +44,7 @@ class ChatTextView: UITextView {
         self.layer.cornerRadius = 10.0
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor(rgb: 0xDDDDDD).cgColor
+        self.layer.masksToBounds = false
     }
 }
 

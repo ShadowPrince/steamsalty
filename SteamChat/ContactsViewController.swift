@@ -20,7 +20,7 @@ extension Array where Element: ContactsViewController.Item {
 }
 
 class ContactsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SteamPollManagerDelegate, ChatSessionsManagerDelegate {
-    class Item: CustomStringConvertible {
+    class Item {
         var user: SteamUser
         var session: ChatSessionsManager.Session?
         var lastUpdated: Date
@@ -29,10 +29,6 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             self.user = user
             self.session = session
             self.lastUpdated = Date()
-        }
-
-        var description: String {
-            return self.user.name
         }
     }
 
