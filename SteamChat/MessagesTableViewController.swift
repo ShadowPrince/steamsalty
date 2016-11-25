@@ -20,11 +20,14 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
 
     var messages = [ParsedMessage]()
     var session: ChatSessionsManager.Session!
-    
+    private var scrollToBottomRequest = false
+
     let typingNotifierQueue = OperationQueue()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
 
         self.tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 10, right: 0)
         self.typingIndicatorLabel.isHidden = true
@@ -47,6 +50,20 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
         }
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if self.scrollToBottomRequest {
+            self.scrollToBottomRequest = false
+
+            self.scrollToBottom(animated: false)
+        }
+    }
+
+    func keyboardDidShow(notification: NSNotification) {
+        self.scrollToBottom(animated: true)
+    }
+
     func scrollToBottom(animated: Bool) {
         if !self.messages.isEmpty {
             self.tableView.scrollToRow(at: IndexPath(row: self.messages.count - 1, section: 0), at: .bottom, animated: animated)
@@ -54,13 +71,17 @@ class MessagesTableViewController: UIViewController, UITableViewDataSource, UITa
     }
 
     func shouldScrollToBottom() -> Bool {
-        return self.tableView.contentOffset.y + self.tableView.frame.height > self.tableView.contentSize.height - 50.0
+        return self.tableView.contentOffset.y + self.tableView.frame.height > self.tableView.contentSize.height - 80.0
     }
 
     func scrollToBottomIfShould() {
         if self.shouldScrollToBottom() {
             self.scrollToBottom(animated: true)
         }
+    }
+
+    func requestScrollToBottom() {
+        self.scrollToBottomRequest = true
     }
 
     func appendMessages(_ messages: [SteamChatMessage]) {

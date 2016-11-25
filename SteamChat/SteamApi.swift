@@ -191,7 +191,7 @@ class SteamApi {
             do {
                 let dict = try self.api.parse(response: response)
                 handler(try SteamPollResponse.decode(dict), nil)
-            } catch RequestError.Error(let e) where e == "Timeout" {
+            } catch RequestError.Error(let e) where e == "Timeout" || response.result.value == nil {
                 handler(nil, RequestError.PollTimeout)
             } catch RequestError.Error(let e) {
                 handler(nil, RequestError.PollError(e))

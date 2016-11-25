@@ -145,7 +145,13 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
     }
 
     func pollError(_ error: Error, manager: SteamPollManager) {
-
+        switch error {
+        case SteamApi.RequestError.AuthFailed:
+            break
+            //self.sessions.removeAll()
+        default:
+            break
+        }
     }
 
     // helpers
@@ -154,6 +160,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
             self.index = self.sessions.index(of: existingSession)!
         } else {
             let session = ChatSessionsManager.Session(user: user)
+            session.unread = user.unreadMessages
             self.sessions.append(session)
 
             let index = self.sessions.isEmpty ? 0 : self.sessions.count - 1

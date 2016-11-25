@@ -40,7 +40,6 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     private var messagesViewController: MessagesTableViewController!
     private var emotesViewController: EmotesViewController!
     private let placeholderMessage = "Enter message..."
-    private var scrollToBottom = false
 
     private var isForeground: Bool = false
     private var index: Int?
@@ -50,7 +49,6 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     override func viewDidLoad() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
 
         self.emojisHeightConstant = self.emojisHeightConstraint.constant
         self.sendWidthConstant = self.sendWidthConstraint.constant
@@ -61,8 +59,9 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
             self.sendWidthConstraint.constant = 0.0
         }
 
-        self.scrollToBottom = true
-        
+        // scroll to bottom at initial open (in case there's already messages in session)
+        self.messagesViewController.requestScrollToBottom()
+
         self.titleLabel.text = "Select contact"
         self.personaStateLabel.text = ""
         self.backButtonVisibility(set: false)
@@ -73,9 +72,11 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     // references of a object conforming to type here goes this abomination
     // i'm not proud if it either
     override func viewWillDisappear(_ animated: Bool) {
+        // remove itself from Settings' delegates
         if let index = Settings.shared.delegates.index(where: { $0 === self }) {
             Settings.shared.delegates.remove(at: index)
         }
+        
         super.viewWillDisappear(animated)
     }
 
@@ -84,18 +85,10 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         super.viewWillAppear(animated)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        if self.scrollToBottom {
-            self.scrollToBottom = false
-            self.messagesViewController.scrollToBottom(animated: true)
-        }
-
-        super.viewDidAppear(animated)
-    }
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        // update back button visibility depening on split view controller state
         if self.isForeground {
             self.backButtonVisibility(set: self.splitViewController?.isCollapsed ?? false)
         }
@@ -170,16 +163,6 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         let endFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
         
         self.bottomConstraint.constant = endFrame?.height ?? 0.0
-        if self.messagesViewController.shouldScrollToBottom() {
-            self.scrollToBottom = true
-        }
-    }
-
-    func keyboardDidShow(notification: NSNotification) {
-        if self.scrollToBottom {
-            self.messagesViewController.scrollToBottom(animated: true)
-            self.scrollToBottom = false
-        }
     }
 
     func keyboardWillHide(notification: NSNotification) {
@@ -297,7 +280,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     }
 
     func sessionOpenedExisting(_ session: ChatSessionsManager.Session, from: ChatSessionsManager) {
-        self.scrollToBottom = true
+
     }
 
     func sessionUpdatedNext(at index: Int, from: ChatSessionsManager) {

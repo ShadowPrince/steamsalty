@@ -32,7 +32,11 @@ extension SteamPollResponse: Decodable {
                                         case .chatMessage:
                                             return SteamChatMessageEvent(type: type, timestamp: timestamp, from: from, message: SteamChatMessage(author: from, message: try json => "text", timestamp: timestamp))
                                         case .personaState:
-                                            return SteamPersonaStateEvent(type: type, timestamp: timestamp, from: from, state: SteamPersonaStateEvent.State(rawValue: try json => "persona_state") ?? .unknown)
+                                            if let personaState = try json =>? "persona_state" as? Int {
+                                                return SteamPersonaStateEvent(type: type, timestamp: timestamp, from: from, state: SteamPersonaStateEvent.State(rawValue: personaState) ?? .unknown)
+                                            } else {
+                                                fallthrough
+                                            }
                                         default:
                                             return SteamEvent(type: type, timestamp: timestamp, from: from)
                                         }
@@ -139,6 +143,7 @@ struct SteamUser: Equatable {
     let cid: SteamCommunityId
     let name: String
     let avatarHash: String
+    var unreadMessages: Int
 
     var lastMessageTimestamp: UInt64
     var state: SteamPersonaStateEvent.State
@@ -173,6 +178,7 @@ extension SteamUser: Decodable {
                              cid: j => "m_ulSteamID",
                              name: j => "m_strName",
                              avatarHash: j => "m_strAvatarHash",
+                             unreadMessages: j =>? "m_cUnreadMessages" ?? 0,
                              lastMessageTimestamp: j => "m_tsLastMessage",
                              state: SteamPersonaStateEvent.State(rawValue: j => "m_ePersonaState") ?? .unknown,
                              currentGame: (j =>? "m_bInGame" == true) ? SteamGame.decode(j) : nil)

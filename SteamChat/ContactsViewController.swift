@@ -68,7 +68,11 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     func pollStatus(_ user: SteamUser, contacts: [SteamUser], emotes: [String]) {
         self.items.removeAll()
         for user in contacts {
-            let item = Item(user: user, session: nil)
+            if user.unreadMessages > 0 {
+                ChatSessionsManager.shared.openChat(with: user)
+            }
+
+            let item = Item(user: user, session: ChatSessionsManager.shared.sessions[user])
             item.lastUpdated = user.lastMessageDate
             
             self.items.append(item)
@@ -85,6 +89,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     func pollError(_ error: Error, manager: SteamPollManager) {
         switch error {
         case SteamApi.RequestError.AuthFailed:
+            print("should close")
             break
         default:
             OperationQueue.main.addOperation {
@@ -98,7 +103,8 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         if let i = self.items.index(of: session.user) {
             self.items[i].lastUpdated = Date()
             self.items[i].session = session
-            self.items.sort(by: { $0.0.lastUpdated > $0.1.lastUpdated })
+            //self.items.sort(by: { $0.0.lastUpdated > $0.1.lastUpdated })
+            self.items = self.items.sorted(by: { $0.0.lastUpdated > $0.1.lastUpdated })
             OperationQueue.main.addOperation {
                 self.tableView.reloadData()
             }

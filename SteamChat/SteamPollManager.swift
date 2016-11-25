@@ -51,7 +51,10 @@ class SteamPollManager {
         self.queue.addOperation {
             print("pollin...")
             SteamApi.shared.poll { (result, error) in
-                if error == nil {
+                var debugThrow: Error? = SteamApi.RequestError.AuthFailed
+                debugThrow = nil
+                
+                if error == nil && debugThrow == nil {
                     for event in result!.events {
                         switch event.type {
                         case .personaState:
@@ -74,7 +77,8 @@ class SteamPollManager {
                     
                     self.delegates.forEach { $0.pollReceived(events: result!.events, manager: self) }
                     self.start()
-                } else if let error = error {
+                } else {
+                    let error = debugThrow != nil ? debugThrow! : error!
                     print(error)
                     
                     if let error = error as? SteamApi.RequestError {
