@@ -86,12 +86,94 @@ extension UIViewController {
             }
         }
     }
+
+    func presentBlurredOverlay(titled: String, indicator: UIActivityIndicatorView) {
+        let view = ILTranslucentView(frame: self.view.bounds)
+
+        let indicatorSize: CGFloat = 20.0
+        indicator.frame = CGRect(x: view.bounds.width / 2 - indicatorSize / 2,
+                                 y: view.bounds.height / 2 - indicatorSize / 2,
+                                 width: indicatorSize,
+                                 height: indicatorSize)
+
+        let label = UILabel(frame: CGRect(x: 0,
+                                          y: view.bounds.height / 2 + indicatorSize,
+                                          width: view.bounds.width,
+                                          height: UIFont.systemFontSize * 2))
+        label.textAlignment = .center
+        label.text = titled
+
+        view.addSubview(label)
+        view.addSubview(indicator)
+
+        self.view.addSubview(view)
+    }
+
+    func dismissBlurredOverlay() {
+        self.view.subviews.last?.removeFromSuperview()
+    }
+}
+
+class OverlayLoadingView: ILTranslucentView {
+
 }
 
 extension UIWebView {
     func loadBackgroundColor(_ color: UIColor) {
         self.loadHTMLString("<html><body bgcolor=\"#\(color.rgbString())\"></body></html>", baseURL: nil)
         self.isOpaque = false
+    }
+}
+
+private var backgroundQueue: OperationQueue?
+
+extension OperationQueue {
+    static var background: OperationQueue {
+        if backgroundQueue == nil {
+            backgroundQueue = OperationQueue()
+            // magic number, hurray!
+            backgroundQueue?.maxConcurrentOperationCount = 20
+        }
+
+        return backgroundQueue!
+    }
+
+    func addAsyncDoTry(_ closure: @escaping () throws -> Void, success: @escaping () -> Void, exception: @escaping (Error) -> Void) {
+        self.addOperation {
+            do {
+                try closure()
+                OperationQueue.main.addOperation {
+                    success()
+                }
+            } catch let e {
+                OperationQueue.main.addOperation {
+                    exception(e)
+                }
+            }
+        }
+    }
+
+    func addAsyncIfElse(_ closure: @escaping () -> Bool, then: @escaping () -> Void, `else`: @escaping () -> Void) {
+        self.addOperation {
+            if closure() {
+                OperationQueue.main.addOperation {
+                    then()
+                }
+            } else {
+                OperationQueue.main.addOperation {
+                    `else`()
+                }
+            }
+        }
+    }
+
+    func addAsync(_ closure: @escaping () -> Void, after: @escaping () -> Void) {
+        self.addOperation {
+            closure()
+            OperationQueue.main.addOperation {
+                after()
+            }
+        }
     }
 }
 

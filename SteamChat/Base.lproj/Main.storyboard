@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="h5c-yO-hef">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Dor-yg-554">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -10,7 +10,7 @@
         <!--Web Authentication View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="WebAuthenticationViewController" customModule="SteamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="webAuthController" id="BYZ-38-t0r" customClass="WebAuthenticationViewController" customModule="SteamChat" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -25,20 +25,16 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Yw9-rz-XWQ"/>
                                 </connections>
                             </webView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="KyY-55-MHX"/>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Jbr-UT-8lm" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="1nc-V5-FgZ"/>
-                            <constraint firstItem="KyY-55-MHX" firstAttribute="centerX" secondItem="Jbr-UT-8lm" secondAttribute="centerX" id="1px-37-t1f"/>
-                            <constraint firstItem="KyY-55-MHX" firstAttribute="top" secondItem="Jbr-UT-8lm" secondAttribute="bottom" constant="8" id="3lz-u2-Hjy"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="KyY-55-MHX" secondAttribute="bottom" constant="8" id="3n3-3a-sAJ"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Jbr-UT-8lm" secondAttribute="bottom" id="Vug-fG-mRb"/>
                             <constraint firstItem="Jbr-UT-8lm" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="bqc-Gz-46G"/>
                             <constraint firstAttribute="trailing" secondItem="Jbr-UT-8lm" secondAttribute="trailing" id="cyC-XA-Q92"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="activityIndicator" destination="KyY-55-MHX" id="GI5-jR-w4B"/>
                         <outlet property="webView" destination="Jbr-UT-8lm" id="9cn-Zi-bLC"/>
                         <segue destination="Y4Q-GU-e9v" kind="unwind" identifier="unwindFromAuth" unwindAction="unwindFromWebAuth:" id="J7J-8S-Yz7"/>
                     </connections>
@@ -46,36 +42,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <exit id="Y4Q-GU-e9v" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="886" y="-1069"/>
-        </scene>
-        <!--Initialization View Controller-->
-        <scene sceneID="86r-NE-hMx">
-            <objects>
-                <viewController id="h5c-yO-hef" customClass="InitializationViewController" customModule="SteamChat" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="YOK-oW-ycE"/>
-                        <viewControllerLayoutGuide type="bottom" id="8yf-q7-gCQ"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="nGJ-7y-olN">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="tbd-o3-9Y7"/>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="tbd-o3-9Y7" firstAttribute="centerY" secondItem="nGJ-7y-olN" secondAttribute="centerY" id="9gK-Wb-jL6"/>
-                            <constraint firstItem="tbd-o3-9Y7" firstAttribute="centerX" secondItem="nGJ-7y-olN" secondAttribute="centerX" id="GMe-N6-hLP"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <segue destination="Dor-yg-554" kind="show" identifier="proceed" id="6dh-aj-tMi"/>
-                        <segue destination="BYZ-38-t0r" kind="show" identifier="toWebAuth" id="m2H-6F-DQm"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="zmP-yJ-0Dz" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="89" y="-612"/>
+            <point key="canvasLocation" x="1100" y="-591"/>
         </scene>
         <!--Active Chat Sessions View Controller-->
         <scene sceneID="A6W-mU-IBU">
@@ -213,7 +180,7 @@
                                     <constraint firstAttribute="width" constant="20" id="cL0-kh-py1"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="online" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DSg-uv-VgD" customClass="PersonaStateLabel" customModule="SteamChat" customModuleProvider="target">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="offline" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DSg-uv-VgD" customClass="PersonaStateLabel" customModule="SteamChat" customModuleProvider="target">
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" red="0.034339413054778056" green="0.75105011594607651" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -514,12 +481,13 @@
                         <segue destination="0du-Ht-eDC" kind="relationship" relationship="masterViewController" id="3aT-go-5Vu"/>
                         <segue destination="J8l-J8-p1z" kind="relationship" relationship="detailViewController" id="fWy-D2-Qz9"/>
                         <segue destination="DYV-74-qOk" kind="unwind" identifier="unwindToAuth" unwindAction="unwindToAuthWithSegue:" id="SD6-Uc-Xo3"/>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="toWebAuth" id="spB-QX-awW"/>
                     </connections>
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DSo-Jf-rav" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="DYV-74-qOk" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="953" y="164"/>
+            <point key="canvasLocation" x="330" y="161"/>
         </scene>
         <!--Chat View Controller-->
         <scene sceneID="5WR-tA-2FO">
@@ -771,11 +739,11 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="GkX-My-dJv">
                                 <color key="backgroundColor" red="0.95197117419999999" green="0.95197117419999999" blue="0.95197117419999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ingoingCell" rowHeight="80" id="CxE-Lv-iUE">
-                                        <rect key="frame" x="0.0" y="28" width="1000" height="80"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ingoingCell" rowHeight="80" id="CxE-Lv-iUE">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="CxE-Lv-iUE" id="gTa-T9-STL">
-                                            <frame key="frameInset" width="1000" height="80"/>
+                                            <frame key="frameInset" width="375" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" scrollEnabled="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cpg-rH-Xmt" customClass="ChatTextView" customModule="SteamChat" customModuleProvider="target">
@@ -802,11 +770,11 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="outgoingCell" rowHeight="80" id="dVB-Lu-lhJ">
-                                        <rect key="frame" x="0.0" y="108" width="1000" height="80"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="outgoingCell" rowHeight="80" id="dVB-Lu-lhJ">
+                                        <rect key="frame" x="0.0" y="108" width="375" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dVB-Lu-lhJ" id="h0E-qH-a8X">
-                                            <frame key="frameInset" width="1000" height="80"/>
+                                            <frame key="frameInset" width="375" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" scrollEnabled="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WaL-Y5-O3J" customClass="ChatTextView" customModule="SteamChat" customModuleProvider="target">

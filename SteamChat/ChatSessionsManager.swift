@@ -47,7 +47,6 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
 
     let typingInterval: CFTimeInterval = 8.0
 
-    let queue = OperationQueue()
     var delegates = [Int: ChatSessionsManagerDelegate]()
     var sessions = [Session]()
 
@@ -166,7 +165,7 @@ class ChatSessionsManager: StackedContainersViewControllerDataSource, SteamPollM
             let index = self.sessions.isEmpty ? 0 : self.sessions.count - 1
             self.index = index
 
-            self.queue.addOperation {
+            OperationQueue.background.addOperation {
                 SteamApi.shared.chatLog(user: user.id) { messages, error in
                     if let messages = messages {
                         session.messages.append(contentsOf: messages)

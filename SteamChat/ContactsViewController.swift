@@ -43,6 +43,9 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidLoad() {
         ChatSessionsManager.shared.delegates[-1] = self
         SteamPollManager.shared.delegates.append(self)
+
+        self.selfNameLabel.text = ""
+        self.selfStateLabel.text = ""
     }
 
     // polling
