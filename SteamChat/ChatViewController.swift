@@ -30,6 +30,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
     @IBOutlet weak var avatarImageView: AvatarImageView!
     @IBOutlet weak var personaStateLabel: PersonaStateLabel!
     @IBOutlet weak var sayTextView: UITextView!
+    @IBOutlet var titleTapGesture: UITapGestureRecognizer!
 
     @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var emojisHeightConstraint: NSLayoutConstraint!
@@ -62,6 +63,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         // scroll to bottom at initial open (in case there's already messages in session)
         self.messagesViewController.requestScrollToBottom()
 
+        self.titleTapGesture.isEnabled = false
         self.titleLabel.text = "Select contact"
         self.personaStateLabel.text = ""
         self.backButtonVisibility(set: false)
@@ -240,6 +242,7 @@ class ChatViewController: StackedContainerViewController, ChatSessionsManagerDel
         self.messagesViewController.appendMessages(self.session.messages)
         self.messagesViewController.reload()
 
+        self.titleTapGesture.isEnabled = true
         self.personaStateLabel.setState(of: session.user)
         self.titleLabel.text = "\(self.session.user.name)"
         self.avatarImageView.loadImage(at: self.session.user.avatar)

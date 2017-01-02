@@ -141,7 +141,8 @@ extension SteamGame: Decodable {
 struct SteamUser: Equatable {
     let id: SteamUserId
     let cid: SteamCommunityId
-    let name: String
+
+    var name: String
     let avatarHash: String
     var unreadMessages: Int
 
@@ -174,9 +175,13 @@ struct SteamUser: Equatable {
 
 extension SteamUser: Decodable {
     static func decode(_ j: Any) throws -> SteamUser {
+        let name: String = try j => "m_strName"
+        // screenshot mode
+        //name = ["David", "Roger", "Richard", "Syd", "Nick", "Freddie", "Brian", "John", "Trent", "Robert", "Tony", "Pat", "Jakko", "Jim", "Ray", "Robby", "John", ].randomElement()
+
         return try SteamUser(id: j => "m_unAccountID",
                              cid: j => "m_ulSteamID",
-                             name: j => "m_strName",
+                             name: name,
                              avatarHash: j => "m_strAvatarHash",
                              unreadMessages: j =>? "m_cUnreadMessages" ?? 0,
                              lastMessageTimestamp: j => "m_tsLastMessage",
